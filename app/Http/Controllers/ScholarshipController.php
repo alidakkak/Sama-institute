@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreScholarshipRequest;
+use App\Http\Requests\UpdateScholarshipRequest;
+use App\Http\Resources\ScholarshipResource;
+use App\Models\Scholarship;
+use Illuminate\Http\Request;
+
+class ScholarshipController extends Controller
+{
+    public function index()
+    {
+        $scholarship = Scholarship::all();
+
+        return ScholarshipResource::collection($scholarship);
+    }
+
+    public function store(StoreScholarshipRequest $request)
+    {
+        try {
+            $scholarship = Scholarship::create($request->all());
+
+            return response()->json([
+                'message' => 'Created SuccessFully',
+                'data' => ScholarshipResource::make($scholarship),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function update(UpdateScholarshipRequest $request, $scholarshipId)
+    {
+        try {
+            $scholarship = Scholarship::find($scholarshipId);
+            if (! $scholarship) {
+                return response()->json(['message' => 'Not Found'], 404);
+            }
+            $scholarship->update($request->all());
+
+            return response()->json([
+                'message' => 'Updated SuccessFully',
+                'data' => ScholarshipResource::make($scholarship),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function show($scholarshipId)
+    {
+        $scholarship = Scholarship::find($scholarshipId);
+        if (! $scholarship) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        return ScholarshipResource::make($scholarship);
+    }
+
+    public function delete($scholarshipId)
+    {
+        try {
+            $scholarship = Scholarship::find($scholarshipId);
+            if (! $scholarship) {
+                return response()->json(['message' => 'Not Found'], 404);
+            }
+            $scholarship->delete();
+
+            return response()->json([
+                'message' => 'Deleted SuccessFully',
+                'data' => ScholarshipResource::make($scholarship),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+}
