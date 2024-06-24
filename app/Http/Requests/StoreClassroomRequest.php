@@ -22,9 +22,17 @@ class StoreClassroomRequest extends FormRequest
      */
     public function rules(): array
     {
+        if (request()->route()->uri() === 'api/addTeacher') {
+            return [
+                'classroom_id' => 'required|exists:classrooms,id',
+                'teacher_id' => 'required|exists:teachers,id',
+                'subject_id' => 'required|exists:subjects,id',
+            ];
+        }
+
         return [
             'name' => 'required|string',
-            'grade_id' => ['required', Rule::exists('grades', 'id')],
+            'semester_id' => ['required', Rule::exists('semesters', 'id')],
         ];
     }
 }

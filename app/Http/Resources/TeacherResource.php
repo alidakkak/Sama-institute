@@ -16,9 +16,16 @@ class TeacherResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'father_name' => $this->father_name,
+            'facebook' => $this->facebook,
             'phone' => $this->phone,
-            'description' => $this->description,
+            'telephone' => $this->telephone,
+            'email' => $this->email,
+            'location' => $this->location,
+            'gender' => $this->gender,
+            'date_of_birth' => $this->date_of_birth,
         ];
     }
 }

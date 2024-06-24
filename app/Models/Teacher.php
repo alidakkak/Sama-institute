@@ -9,10 +9,15 @@ class Teacher extends Model
 {
     use HasFactory;
 
-    Protected $guarded = ['id'];
+    protected $guarded = ['id'];
 
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, 'subject_teachers', 'teacher_id', 'subject_id');
+        return $this->belongsToMany(Subject::class, 'student_classrooms', 'teacher_id', 'subject_id');
+    }
+
+    public function classrooms()
+    {
+        return $this->belongsToMany(Classroom::class, 'subject_classrooms', 'teacher_id', 'classroom_id');
     }
 }

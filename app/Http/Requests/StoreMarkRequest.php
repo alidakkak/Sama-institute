@@ -11,7 +11,7 @@ class StoreMarkRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreMarkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'result' => 'required|array',
+            'result.*' => 'required|numeric|between:0,100',
+            'subject_id' => ['required', 'numeric', 'exists:subjects,id'],
+            'exam_id' => ['required', 'numeric', 'exists:exams,id'],
+            'student_id' => 'required|array',
+            'student_id.*' => ['required', 'numeric', 'exists:students,id'],
         ];
     }
 }

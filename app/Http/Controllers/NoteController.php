@@ -6,7 +6,6 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
-use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {

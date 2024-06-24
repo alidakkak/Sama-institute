@@ -6,7 +6,6 @@ use App\Http\Requests\StoreScholarshipRequest;
 use App\Http\Requests\UpdateScholarshipRequest;
 use App\Http\Resources\ScholarshipResource;
 use App\Models\Scholarship;
-use Illuminate\Http\Request;
 
 class ScholarshipController extends Controller
 {

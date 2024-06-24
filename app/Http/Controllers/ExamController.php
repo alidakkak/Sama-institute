@@ -6,7 +6,6 @@ use App\Http\Requests\StoreExamRequest;
 use App\Http\Requests\UpdateExamRequest;
 use App\Http\Resources\ExamResource;
 use App\Models\Exam;
-use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {

@@ -14,10 +14,17 @@ class ClassroomResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if ($request->route()->uri() === 'api/classrooms') {
+            return [
+                'id' => $this->id,
+                'name' => $this->name,
+            ];
+        }
+
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'students' => StudentResource::collection($this->students)
+            'subjects' => SubjectResource::collection($this->subjects),
         ];
     }
 }

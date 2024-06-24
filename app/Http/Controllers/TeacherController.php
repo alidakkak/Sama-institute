@@ -6,7 +6,6 @@ use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
-use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
@@ -21,7 +20,8 @@ class TeacherController extends Controller
     {
         try {
             $teacher = Teacher::create($request->all());
-            $teacher->subjects()->attach($request->subject_ids);
+            //            $teacher->subjects()->attach($request->subject_ids);
+
             return response()->json([
                 'message' => 'Created SuccessFully',
                 'data' => TeacherResource::make($teacher),
@@ -42,7 +42,8 @@ class TeacherController extends Controller
                 return response()->json(['message' => 'Not Found'], 404);
             }
             $teacher->update($request->all());
-            $teacher->subjects()->sync($request->subject_ids);
+            //            $teacher->subjects()->sync($request->subject_ids);
+
             return response()->json([
                 'message' => 'Updated SuccessFully',
                 'data' => TeacherResource::make($teacher),

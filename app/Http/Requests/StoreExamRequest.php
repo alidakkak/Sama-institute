@@ -23,6 +23,7 @@ class StoreExamRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
+            'percent' => 'required|integer|min:0|max:100',
         ];
     }
 }

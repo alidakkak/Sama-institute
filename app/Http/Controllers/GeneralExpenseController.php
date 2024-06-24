@@ -6,7 +6,6 @@ use App\Http\Requests\StoreGeneralExpenseRequest;
 use App\Http\Requests\UpdateGeneralExpenseRequest;
 use App\Http\Resources\GeneralExpenseResource;
 use App\Models\GeneralExpense;
-use Illuminate\Http\Request;
 
 class GeneralExpenseController extends Controller
 {

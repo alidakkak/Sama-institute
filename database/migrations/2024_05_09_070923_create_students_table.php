@@ -13,14 +13,35 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->text('name');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->integer('age');
+            $table->date('date_of_birth');
+            $table->string('place_of_birth');
+            $table->string('gender');
+            $table->string('marital_status')->nullable();
+            $table->string('previous_educational_status');
+            $table->string('phone_number')->nullable();
+            $table->string('telephone_number')->nullable();
+            $table->string('facebook')->nullable();
+            $table->string('instagram')->nullable();
+            $table->string('location');
+            $table->string('father_name')->nullable();
+            $table->string('father_work')->nullable();
+            $table->date('father_of_birth')->nullable();
+            $table->string('mother_name')->nullable();
+            $table->string('mother_work')->nullable();
+            $table->date('mother_of_birth')->nullable();
+            $table->string('other_name')->nullable();
+            $table->string('other_work')->nullable();
+            $table->date('other_of_birth')->nullable();
+            $table->string('note1')->nullable();
+            $table->string('note2')->nullable();
+            $table->string('image')->nullable();
             $table->string('user_name')->unique();
             $table->string('password');
-            $table->string('birthdate');
-            $table->foreignId('grade_id')->references('id')
-                ->on('grades')->onDelete('cascade');
-            $table->foreignId('academic_year_id')->references('id')
-                ->on('academic_years')->onDelete('cascade');
+            $table->foreignId('semester_id')->references('id')
+                ->on('semesters')->onDelete('cascade');
             $table->foreignId('scholarship_id')->nullable()->references('id')
                 ->on('scholarships')->onDelete('cascade');
             $table->timestamps();

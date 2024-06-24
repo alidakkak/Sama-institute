@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAcademicYearRequest extends FormRequest
+class StoreSemesterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,13 @@ class StoreAcademicYearRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_year' => 'required|string'
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'subjects' => 'required|array',
+            'subjects.*.name' => 'required',
+            'subjects.*.number_sessions_per_week' => 'required|numeric',
         ];
     }
 }

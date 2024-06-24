@@ -6,7 +6,6 @@ use App\Http\Requests\StoreNameExpenseRequest;
 use App\Http\Requests\UpdateNameExpenseRequest;
 use App\Http\Resources\NameExpenseResource;
 use App\Models\NameExpense;
-use Illuminate\Http\Request;
 
 class NameExpenseController extends Controller
 {

@@ -11,11 +11,13 @@ class Classroom extends Model
 
     protected $guarded = ['id'];
 
-    public function grade() {
-        return $this->belongsTo(Grade::class);
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'student_classrooms', 'classroom_id', 'student_id');
     }
 
-    public function students() {
-        return $this->belongsToMany(Student::class, 'student_classrooms', 'classroom_id', 'student_id');
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'subject_classrooms')->withPivot('teacher_id');
     }
 }

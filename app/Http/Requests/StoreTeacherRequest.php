@@ -22,11 +22,16 @@ class StoreTeacherRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'father_name' => 'required|string',
+            'facebook' => 'nullable|string',
             'phone' => 'required|string',
-            'designation' => 'required|string',
-            'subject_ids' => 'array|required',
-            'subject_ids.*' => 'required|exists:subjects,id',
+            'telephone' => 'nullable|string',
+            'location' => 'required|string',
+            'gender' => 'required|string',
+            'email' => 'required|email',
+            'date_of_birth' => 'required|date',
         ];
     }
 }

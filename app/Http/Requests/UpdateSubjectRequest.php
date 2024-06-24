@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateSubjectRequest extends FormRequest
 {
@@ -22,8 +23,9 @@ class UpdateSubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'price' => 'required|numeric',
+            'name' => 'string',
+            'number_sessions_per_week' => 'numeric',
+            'semester_id' => [Rule::exists('semesters', 'id')],
         ];
     }
 }

@@ -22,11 +22,16 @@ class UpdateTeacherRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'phone' => 'required|string',
-            'designation' => 'required|string',
-            'subject_ids' => 'array|required',
-            'subject_ids.*' => 'required|exists:subjects,id',
+            'first_name' => 'string',
+            'last_name' => 'string',
+            'father_name' => 'string',
+            'facebook' => 'string',
+            'phone' => 'string',
+            'telephone' => 'nullable|string',
+            'location' => 'string',
+            'gender' => 'string',
+            'email' => 'email',
+            'date_of_birth' => 'date',
         ];
     }
 }

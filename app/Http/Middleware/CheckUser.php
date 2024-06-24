@@ -16,15 +16,15 @@ class CheckUser
             $request->headers->set('auth-token', (string) $token, true);
             $request->headers->set('Authorization', 'Bearer '.$token, true);
             $user = JWTAuth::parseToken()->authenticate();
-//            $auth = false;
-//            foreach ($roles as $role) {
-//                if (Auth::check() && $user->type == $role) {
-//                    $auth = true;
-//                }
-//            }
-//            if ($auth == false) {
-//                return response()->json(['Unauthorized'], 401);
-//            }
+            //            $auth = false;
+            //            foreach ($roles as $role) {
+            //                if (Auth::check() && $user->type == $role) {
+            //                    $auth = true;
+            //                }
+            //            }
+            //            if ($auth == false) {
+            //                return response()->json(['Unauthorized'], 401);
+            //            }
 
         } catch (\Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {

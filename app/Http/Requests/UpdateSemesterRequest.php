@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class StoreGradeRequest extends FormRequest
+class UpdateSemesterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +22,14 @@ class StoreGradeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'academic_year_id' => ['required', Rule::exists('academic_years', 'id')],
+            //    'name' => 'required',
+            'price' => 'numeric',
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'subjects' => 'array',
+            'subjects.*.name' => 'string',
+            'subjects.*.number_sessions_per_week' => 'numeric',
+            'subjects.*.subject_id' => 'exists:subjects,id',
         ];
     }
 }

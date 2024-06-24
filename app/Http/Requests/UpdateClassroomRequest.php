@@ -24,7 +24,7 @@ class UpdateClassroomRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'grade_id' => ['required', Rule::exists('grades', 'id')],
+            'semester_id' => ['required', Rule::exists('semesters', 'id')],
         ];
     }
 }

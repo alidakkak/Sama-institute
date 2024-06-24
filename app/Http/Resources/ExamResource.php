@@ -17,6 +17,7 @@ class ExamResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'percent' => $this->percent,
         ];
     }
 }

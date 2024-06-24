@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSubjectRequest extends FormRequest
 {
@@ -23,7 +24,8 @@ class StoreSubjectRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'price' => 'required|numeric',
+            'number_sessions_per_week' => 'required|numeric',
+            'semester_id' => ['required', Rule::exists('semesters', 'id')],
         ];
     }
 }

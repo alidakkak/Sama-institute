@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('classrooms', function (Blueprint $table) {
+        Schema::create('scholarships', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('grade_id')->references('id')
-                ->on('grades')->onDelete('cascade');
-            $table->softDeletes();
+            $table->text('description');
+            $table->double('discount');
+            //            $table->foreignId('grade_id')->constrained('grades')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('classrooms');
+        Schema::dropIfExists('scholarships');
     }
 };
