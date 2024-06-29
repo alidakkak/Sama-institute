@@ -14,6 +14,18 @@ class Student extends Authenticatable implements JWTSubject
 
     protected $guard = 'api_student';
 
+    public function setImageAttribute($image)
+    {
+        if ($image instanceof \Illuminate\Http\UploadedFile) {
+            $newImageName = uniqid().'_'.'students_image'.'.'.$image->extension();
+            $image->move(public_path('students_image'), $newImageName);
+
+            return $this->attributes['image'] = '/'.'students_image'.'/'.$newImageName;
+        } elseif (is_string($image)) {
+            $this->attributes['image'] = $image;
+        }
+    }
+
     public function classrooms()
     {
         return $this->belongsToMany(Classroom::class, 'student_classrooms', 'student_id', 'classroom_id');
@@ -34,9 +46,19 @@ class Student extends Authenticatable implements JWTSubject
         return $this->hasMany(Mark::class);
     }
 
+    public function studentPayment()
+    {
+        return $this->hasMany(StudentPayment::class);
+    }
+
     public function scholarship()
     {
         return $this->belongsTo(Scholarship::class);
+    }
+
+    public function registration()
+    {
+        return $this->hasMany(Registration::class);
     }
 
     /**

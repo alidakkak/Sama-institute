@@ -15,4 +15,14 @@ class Semester extends Model
     {
         return $this->hasMany(Subject::class);
     }
+
+    public function exams()
+    {
+        return $this->hasMany(Exam::class);
+    }
+
+    public function registration()
+    {
+        return $this->hasMany(Registration::class);
+    }
 }

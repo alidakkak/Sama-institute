@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSubjectRequest;
 use App\Http\Requests\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
+use App\Models\StudentSubject;
 use App\Models\Subject;
+use Illuminate\Support\Facades\Auth;
 
 class SubjectController extends Controller
 {
@@ -15,6 +17,17 @@ class SubjectController extends Controller
 
         return SubjectResource::collection($subject);
     }
+
+    /// API For Flutter To Get Subject
+    public function getSubject()
+    {
+        $studentID = auth::guard('api_student')->user()->id;
+        $subjectIDs = StudentSubject::where('student_id', $studentID)->pluck('subject_id');
+        $subjects = Subject::whereIn('id', $subjectIDs)->get();
+
+        return SubjectResource::collection($subjects);
+    }
+
 
     public function store(StoreSubjectRequest $request)
     {
@@ -52,16 +65,6 @@ class SubjectController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    public function show($subjectId)
-    {
-        $subject = Subject::find($subjectId);
-        if (! $subject) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        return SubjectResource::make($subject);
     }
 
     public function delete($subjectId)

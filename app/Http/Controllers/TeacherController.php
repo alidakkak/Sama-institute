@@ -9,12 +9,36 @@ use App\Models\Teacher;
 
 class TeacherController extends Controller
 {
+    /// Get All Teachers
     public function index()
     {
         $teacher = Teacher::all();
 
         return TeacherResource::collection($teacher);
     }
+
+    //// Get Teachers Active
+    public function teacherActive()
+    {
+        $teacher = Teacher::all()->where('status', 'active');
+
+        return TeacherResource::collection($teacher);
+    }
+
+    /// Make Teacher Inactive
+    public function makeInactive($id)
+    {
+        $teacher = Teacher::find($id);
+
+        if (!$teacher) {
+            return response()->json(['message' => 'Teacher not found'], 404);
+        }
+
+        $teacher->update(['status' => 'inactive']);
+
+        return response()->json(['message' => 'Teacher status updated to inactive'], 200);
+    }
+
 
     public function store(StoreTeacherRequest $request)
     {

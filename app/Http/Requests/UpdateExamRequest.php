@@ -22,8 +22,9 @@ class UpdateExamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'percent' => 'required|integer|min:0|max:100',
+            'name' => 'string',
+            'percent' => 'integer|min:0|max:100',
+            'semester_id' => 'integer|exists:semesters,id'
         ];
     }
 }

@@ -17,42 +17,37 @@ class StudentResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-        if ($request->route()->uri() === 'api/showDetails/{studentID}') {
-            $subjectResults = $this->marks->groupBy('subject_id')
-                ->map(function ($subjectGroup) {
-                    $examResults = $subjectGroup->groupBy('exam_id')
-                        ->map(function ($examGroup) {
-                            return [
-                                'examName' => $examGroup->first()->exam->name,
-                                'average' => $examGroup->avg('result'),
-                            ];
-                        });
-
-                    return [
-                        'subjectName' => $subjectGroup->first()->subject->name,
-                        'average' => $subjectGroup->avg('result'),
-                        'exams' => $examResults->values()->all(),
-                    ];
+        $subjectResults = $this->marks->groupBy('subject_id')
+            ->map(function ($subjectGroup) {
+                $totalWeight = $subjectGroup->sum(function ($mark) {
+                    return $mark->exam->percent;
                 });
 
-            return [
-                'details' => ShowDetailsResource::collection($this->marks),
-                'subjectResults' => $subjectResults->values()->all(),
-            ];
-        }
+                $weightedSum = $subjectGroup->reduce(function ($carry, $mark) {
+                    return $carry + $mark->result * ($mark->exam->percent / 100);
+                }, 0);
 
-        if ($request->route()->uri() === 'api/getInfoStudent') {
-            return [
-                'id' => $this->id,
-                'name' => $this->name,
-                'user_name' => $this->user_name,
-                'classroom' => $this->classrooms->pluck('name'),
-            ];
-        }
+                $weightedAverage = ($totalWeight > 0) ? ($weightedSum / $totalWeight) * 100 : 0;
+
+                $examResults = $subjectGroup->groupBy('exam_id')
+                    ->map(function ($examGroup) {
+                        return [
+                            'examName' => $examGroup->first()->exam->name,
+                            'average' => $examGroup->avg('result'),
+                            'weight' => $examGroup->first()->exam->percent,
+                        ];
+                    });
+
+                return [
+                    'subjectID' => $subjectGroup->first()->subject->id,
+                    'subjectName' => $subjectGroup->first()->subject->name,
+                    'average' => $weightedAverage,
+                    'exams' => $examResults->values()->all(),
+                ];
+            });
 
         $data = [
             'id' => $this->id,
-            'user_name' => $this->user_name,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'age' => $this->age,
@@ -77,11 +72,28 @@ class StudentResource extends JsonResource
             'other_of_birth' => $this->other_of_birth,
             'note1' => $this->note1,
             'note2' => $this->note2,
-            'image' => $this->image,
+            'image' => url($this->image),
+            'studentPayment' => StudentPaymentResource::collection($this->studentPayment),
+            'studentBehavior' => NoteResource::collection($this->notes),
+            'marks' => ShowDetailsResource::collection($this->marks),
+            'subjectResults' => $subjectResults->values()->all(),
         ];
 
         if ($this->token) {
             $data['token'] = $this->token;
+        }
+
+        //// For Flutter
+        if ($request->route()->uri() === 'api/getInfoStudent') {
+            return [
+                'id' => $this->id,
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'phone_number' => $this->phone_number,
+                'image' => url($this->image),
+                'marks' => ShowDetailsResource::collection($this->marks),
+                'subjectResults' => $subjectResults->values()->all(),
+            ];
         }
 
         return $data;

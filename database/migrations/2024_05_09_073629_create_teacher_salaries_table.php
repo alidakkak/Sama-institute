@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('teacher_salaries', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('teacher_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->double('price');
             $table->timestamps();
         });
     }

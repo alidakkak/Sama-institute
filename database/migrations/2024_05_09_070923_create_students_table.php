@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('gender');
             $table->string('marital_status')->nullable();
             $table->string('previous_educational_status');
-            $table->string('phone_number')->nullable();
+            $table->string('phone_number');
             $table->string('telephone_number')->nullable();
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();
@@ -38,12 +38,7 @@ return new class extends Migration
             $table->string('note1')->nullable();
             $table->string('note2')->nullable();
             $table->string('image')->nullable();
-            $table->string('user_name')->unique();
             $table->string('password');
-            $table->foreignId('semester_id')->references('id')
-                ->on('semesters')->onDelete('cascade');
-            $table->foreignId('scholarship_id')->nullable()->references('id')
-                ->on('scholarships')->onDelete('cascade');
             $table->timestamps();
         });
     }

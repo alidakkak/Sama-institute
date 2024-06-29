@@ -15,4 +15,9 @@ class Exam extends Model
     {
         return $this->hasMany(Mark::class);
     }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
+    }
 }

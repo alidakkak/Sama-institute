@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class NoteResource extends JsonResource
+class StudentPaymentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,7 +17,8 @@ class NoteResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'created_at' => $this->created_at->format('Y-m-d H:i'),
+            'price' => $this->price,
+            'created_at' => $this->created_at->format('d-m-Y'),
         ];
     }
 }

@@ -19,7 +19,6 @@ class ShowDetailsResource extends JsonResource
             'result' => $this->result,
             'subjectName' => $this->subject->name,
             'examName' => $this->exam->name,
-            'studentName' => $this->student->name,
             'created_at' => ($this->created_at)->format('Y-m-d'),
         ];
     }

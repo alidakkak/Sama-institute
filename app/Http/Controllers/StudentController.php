@@ -21,16 +21,6 @@ class StudentController extends Controller
         return StudentResource::collection($student);
     }
 
-    public function showDetails($studentID)
-    {
-        $student = Student::find($studentID);
-        if (! $student) {
-            return response()->json(['message' => 'Student not found'], 404);
-        }
-
-        return new StudentResource($student);
-    }
-
     public function store(StoreStudentRequest $request)
     {
         DB::beginTransaction();
@@ -40,8 +30,6 @@ class StudentController extends Controller
                 'password' => Hash::make($password),
                 ...$request->except('password'),
             ]));
-            $student->classrooms()->attach($request->classroom_ids);
-            $student->subjects()->attach($request->subject_ids);
             DB::commit();
 
             return response()->json([
@@ -70,8 +58,6 @@ class StudentController extends Controller
                 'password' => Hash::make($request->password),
                 ...$request->except('password'),
             ]));
-            $student->classrooms()->sync($request->classroom_ids);
-            $student->subjects()->sync($request->subject_ids);
             DB::commit();
 
             return response()->json([
@@ -134,7 +120,7 @@ class StudentController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_name' => 'required',
+            'phone_number' => 'required',
             'password' => 'required|string|min:6',
         ]);
         if ($validator->fails()) {

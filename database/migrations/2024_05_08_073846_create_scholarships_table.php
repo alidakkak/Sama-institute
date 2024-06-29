@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->double('discount');
-            //            $table->foreignId('grade_id')->constrained('grades')->onDelete('cascade');
+            //$table->foreignId('grade_id')->constrained('grades')->onDelete('cascade');
             $table->timestamps();
         });
     }

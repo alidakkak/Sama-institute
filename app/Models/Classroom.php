@@ -20,4 +20,9 @@ class Classroom extends Model
     {
         return $this->belongsToMany(Subject::class, 'subject_classrooms')->withPivot('teacher_id');
     }
+
+    public function registration()
+    {
+        return $this->hasMany(Registration::class);
+    }
 }

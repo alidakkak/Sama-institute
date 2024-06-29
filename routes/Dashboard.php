@@ -10,8 +10,10 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ScholarshipController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentPaymentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TeacherSalaryController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -37,9 +39,14 @@ Route::post('addTeacher', [ClassroomController::class, 'addTeacher']);
 Route::get('students', [StudentController::class, 'index']);
 Route::get('showDetails/{studentID}', [StudentController::class, 'showDetails']);
 Route::post('students', [StudentController::class, 'store']);
-Route::patch('students/{studentId}', [StudentController::class, 'update']);
+Route::post('students/{studentId}', [StudentController::class, 'update']);
 Route::get('students/{studentId}', [StudentController::class, 'show']);
 Route::delete('students/{studentId}', [StudentController::class, 'delete']);
+
+//// Student Payment
+Route::get('studentPayment', [StudentPaymentController::class, 'index']);
+Route::post('studentPayment', [StudentPaymentController::class, 'store']);
+Route::patch('studentPayment/{Id}', [StudentPaymentController::class, 'update']);
 
 //// Note
 Route::get('notes', [NoteController::class, 'index']);
@@ -78,10 +85,17 @@ Route::delete('scholarships/{scholarshipId}', [ScholarshipController::class, 'de
 
 //// Teacher
 Route::get('teachers', [TeacherController::class, 'index']);
+Route::get('teacherActive', [TeacherController::class, 'teacherActive']);
 Route::post('teachers', [TeacherController::class, 'store']);
+Route::post('makeInactive/{id}', [TeacherController::class, 'makeInactive']);
 Route::patch('teachers/{teacherId}', [TeacherController::class, 'update']);
 Route::get('teachers/{teacherId}', [TeacherController::class, 'show']);
 Route::delete('teachers/{teacherId}', [TeacherController::class, 'delete']);
+
+//// Student Payment
+Route::get('teacherSalary', [TeacherSalaryController::class, 'index']);
+Route::post('teacherSalary', [TeacherSalaryController::class, 'store']);
+Route::patch('teacherSalary/{Id}', [TeacherSalaryController::class, 'update']);
 
 //// Name Expenses
 Route::get('nameExpenses', [NameExpenseController::class, 'index']);

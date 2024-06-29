@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentPaymentController;
+use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,5 +19,15 @@ use Illuminate\Support\Facades\Route;
 Route::post('/loginStudent', [StudentController::class, 'login']);
 
 Route::group(['middleware' => 'auth:api_student'], function () {
+    /// Get Information For Student
     Route::get('getInfoStudent', [StudentController::class, 'getInfoStudent']);
+
+    /// Note
+    Route::get('getNotes', [NoteController::class, 'getNote']);
+
+    /// Subject
+    Route::get('getSubjects', [SubjectController::class, 'getSubject']);
+
+    /// Student Payment
+    Route::get('getStudentPayment', [StudentPaymentController::class, 'getStudentPayment']);
 });

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
+use Illuminate\Support\Facades\Auth;
 
 class NoteController extends Controller
 {
@@ -13,6 +14,16 @@ class NoteController extends Controller
     {
         $note = Note::all();
 
+        return NoteResource::collection($note);
+    }
+
+    /// API For Flutter To Get Nots
+    public function getNote()
+    {
+        $studentID = auth::guard('api_student')->user()->id;
+        $note = Note::where('student_id', $studentID)
+            ->orderBy('created_at', 'desc')
+            ->get();
         return NoteResource::collection($note);
     }
 
