@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('semester_id')->constrained('semesters')->cascadeOnDelete();
             $table->foreignId('classroom_id')->constrained('classrooms')->cascadeOnDelete();
             $table->foreignId('scholarship_id')->nullable()->constrained('scholarships')->cascadeOnDelete();
+            $table->double('financialDues');
             $table->timestamps();
         });
     }

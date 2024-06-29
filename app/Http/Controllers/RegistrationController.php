@@ -17,14 +17,10 @@ class RegistrationController extends Controller
         try {
             DB::beginTransaction();
             $registration = Registration::create($request->all());
-
-            $semesterId = $request->input('semester_id');
-            $subjects = Subject::where('semester_id', $semesterId)->select('id')->get();
-
-            foreach ($subjects as $subject) {
+            foreach ($request->subjects as $subject) {
                 StudentSubject::create([
                     'subject_id' => $subject->id,
-                    'classroom_id' => $classroom->id,
+                    'student_id' => $request->student_id,
                 ]);
             }
             DB::commit();

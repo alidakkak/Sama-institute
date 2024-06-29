@@ -26,6 +26,8 @@ class UpdateSemesterRequest extends FormRequest
             'price' => 'numeric',
             'start_date' => 'date',
             'end_date' => 'date',
+            'actual_start_date' => 'nullable|date',
+            'actual_completion_date' => 'nullable|date',
             'subjects' => 'array',
             'subjects.*.name' => 'string',
             'subjects.*.number_sessions_per_week' => 'numeric',

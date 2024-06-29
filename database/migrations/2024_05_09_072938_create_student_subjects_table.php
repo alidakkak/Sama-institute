@@ -17,6 +17,7 @@ return new class extends Migration
                 ->on('students')->onDelete('cascade');
             $table->foreignId('subject_id')->references('id')
                 ->on('subjects')->onDelete('cascade');
+            $table->boolean('isComplete')->default(false);
         });
     }
 
