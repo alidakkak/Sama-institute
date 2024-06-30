@@ -26,7 +26,6 @@ class StoreScholarshipRequest extends FormRequest
             'name' => 'required|string',
             'description' => 'required|string',
             'discount' => 'required|numeric|min:1,max:100',
-            'grade_id' => ['required', Rule::exists('grades', 'id')],
         ];
     }
 }

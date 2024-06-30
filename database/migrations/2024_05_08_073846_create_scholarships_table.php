@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('scholarships', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->double('discount');
-            //$table->foreignId('grade_id')->constrained('grades')->onDelete('cascade');
             $table->timestamps();
         });
     }

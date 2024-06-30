@@ -25,10 +25,11 @@ class StoreRegistrationRequest extends FormRequest
             'student_id' => 'required|unique:students,student_id',
             'semester_id' => 'required|exists:semesters,semester_id',
             'classroom_id' => 'required|exists:classrooms,classroom_id',
-            'scholarship_id' => 'required|exists:scholarships,scholarship_id',
+            'scholarship_id' => 'nullable|exists:scholarships,scholarship_id',
             'subjects' => 'required|array',
             'subjects.*.subject_id' => 'required|exists:subjects,subject_id',
             'financialDues' => 'required|numeric|min:0',
+            'total_number_of_sessions' => 'required|numeric|min:0',
         ];
     }
 }

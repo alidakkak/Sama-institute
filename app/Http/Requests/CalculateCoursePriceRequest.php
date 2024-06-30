@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateScholarshipRequest extends FormRequest
+class CalculateCoursePriceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +22,10 @@ class UpdateScholarshipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'description' => 'required|string',
-            'discount' => 'required|numeric|min:1,max:100',
+            'total_number_of_sessions' => 'required|numeric|min:1',
+            'price' => 'required|numeric|min:1',
+            'percentage_increase_over_the_default_price' => 'required|numeric|min:0,max:100',
+            'rounding_threshold' => 'required|numeric|min:1',
         ];
     }
 }

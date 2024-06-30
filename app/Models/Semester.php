@@ -25,4 +25,9 @@ class Semester extends Model
     {
         return $this->hasMany(Registration::class);
     }
+
+    public function classrooms()
+    {
+        return $this->hasMany(Classroom::class);
+    }
 }

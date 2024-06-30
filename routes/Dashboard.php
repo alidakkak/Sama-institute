@@ -7,6 +7,7 @@ use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\NameExpenseController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ScholarshipController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentController;
@@ -42,6 +43,10 @@ Route::post('students', [StudentController::class, 'store']);
 Route::post('students/{studentId}', [StudentController::class, 'update']);
 Route::get('students/{studentId}', [StudentController::class, 'show']);
 Route::delete('students/{studentId}', [StudentController::class, 'delete']);
+
+//// Registration
+Route::post('registrations', [RegistrationController::class, 'store']);
+Route::post('calculateCoursePrice', [RegistrationController::class, 'calculateCoursePrice']);
 
 //// Student Payment
 Route::get('studentPayment', [StudentPaymentController::class, 'index']);
