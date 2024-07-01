@@ -24,6 +24,7 @@ class NoteController extends Controller
         $note = Note::where('student_id', $studentID)
             ->orderBy('created_at', 'desc')
             ->get();
+
         return NoteResource::collection($note);
     }
 

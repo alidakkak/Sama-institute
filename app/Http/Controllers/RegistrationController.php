@@ -4,15 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CalculateCoursePriceRequest;
 use App\Http\Requests\StoreRegistrationRequest;
-use App\Http\Resources\RegistrationResource;
 use App\Models\Registration;
 use App\Models\Scholarship;
 use App\Models\StudentSubject;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class RegistrationController extends Controller
 {
+    /*    public function processRequest(Request $request)
+        {
+            $action = $request->input('action');
+
+            if ($action === 'calculate') {
+                return $this->calculateCoursePrice(new CalculateCoursePriceRequest($request->all()));
+            } elseif ($action === 'save') {
+                return $this->store(new StoreRegistrationRequest($request->all()));
+            } else {
+                return response()->json([
+                    'message' => 'Invalid action',
+                ], 400);
+            }
+        }*/
+
     public function calculateCoursePrice(CalculateCoursePriceRequest $request)
     {
         $total_sessions = $request->total_number_of_sessions;
@@ -58,20 +71,17 @@ class RegistrationController extends Controller
             'finalPrice' => $rounded_price,
             'afterDiscount' => $rounded_price * (1 - $scholarship / 100),
             'default_price_per_session' => $default_price_per_session,
-            ]);
+        ]);
     }
 
     public function store(StoreRegistrationRequest $request)
     {
         try {
             DB::beginTransaction();
-            $registration = Registration::create(array_merge([
-                $request->all(),
-                'after_discount'
-            ]));
+            $registration = Registration::create($request->all());
             foreach ($request->subjects as $subject) {
                 StudentSubject::create([
-                    'subject_id' => $subject->id,
+                    'subject_id' => $subject['subject_id'],
                     'student_id' => $request->student_id,
                 ]);
             }

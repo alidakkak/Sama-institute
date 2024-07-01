@@ -24,7 +24,7 @@ class UpdateExamRequest extends FormRequest
         return [
             'name' => 'string',
             'percent' => 'integer|min:0|max:100',
-            'semester_id' => 'integer|exists:semesters,id'
+            'semester_id' => 'integer|exists:semesters,id',
         ];
     }
 }

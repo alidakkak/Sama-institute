@@ -27,7 +27,7 @@ class TeacherResource extends JsonResource
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth,
             'status' => $this->status,
-            'teacherPayment' => TeacherSalaryResource::collection($this->teacherSalary)
+            'teacherPayment' => TeacherSalaryResource::collection($this->teacherSalary),
         ];
     }
 }

@@ -28,7 +28,6 @@ class SubjectController extends Controller
         return SubjectResource::collection($subjects);
     }
 
-
     public function store(StoreSubjectRequest $request)
     {
         try {

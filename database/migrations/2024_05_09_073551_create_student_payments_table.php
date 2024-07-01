@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('student_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
+            $table->foreignId('semester_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->double('price');
             $table->timestamps();

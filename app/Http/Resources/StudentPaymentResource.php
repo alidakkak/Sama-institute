@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,8 @@ class StudentPaymentResource extends JsonResource
             'title' => $this->title,
             'price' => $this->price,
             'created_at' => $this->created_at->format('d-m-Y'),
+            'semester_id' => $this->semester_id,
+            //            'Registration' => RegistrationResource::collection($this->semester->registration)
         ];
     }
 }

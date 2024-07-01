@@ -30,4 +30,9 @@ class Semester extends Model
     {
         return $this->hasMany(Classroom::class);
     }
+
+    public function studentPayment()
+    {
+        return $this->belongsTo(StudentPayment::class);
+    }
 }

@@ -30,7 +30,7 @@ class TeacherController extends Controller
     {
         $teacher = Teacher::find($id);
 
-        if (!$teacher) {
+        if (! $teacher) {
             return response()->json(['message' => 'Teacher not found'], 404);
         }
 
@@ -38,7 +38,6 @@ class TeacherController extends Controller
 
         return response()->json(['message' => 'Teacher status updated to inactive'], 200);
     }
-
 
     public function store(StoreTeacherRequest $request)
     {

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreStudentPaymentRequest;
 use App\Http\Requests\UpdateStudentPaymentRequest;
 use App\Http\Resources\StudentPaymentResource;
+use App\Models\Registration;
+use App\Models\Semester;
+use App\Models\Student;
 use App\Models\StudentPayment;
 
 class StudentPaymentController extends Controller
@@ -23,16 +26,42 @@ class StudentPaymentController extends Controller
         $payment = StudentPayment::where('student_id', $student)
             ->orderBy('created_at', 'desc')
             ->get();
+
         return StudentPaymentResource::collection($payment);
     }
 
     public function store(StoreStudentPaymentRequest $request)
     {
         try {
+            $student = Student::find($request->student_id);
+            $semester = Semester::find($request->semester_id);
+
+            $registration = Registration::where('student_id', $student->id)
+                ->where('semester_id', $semester->id)
+                ->first();
+
+            if (! $registration) {
+                return response()->json([
+                    'message' => 'Registration not found',
+                ], 404);
+            }
+            $after_discount = $registration->after_discount;
+            $financialDues = $registration->financialDues;
+
             $studentPayment = StudentPayment::create($request->all());
 
+            if ($registration->scholarship_id !== null) {
+                $registration->update([
+                    'after_discount' => $after_discount - $request->price,
+                ]);
+            } else {
+                $registration->update([
+                    'financialDues' => $financialDues - $request->price,
+                ]);
+            }
+
             return response()->json([
-                'message' => 'Created SuccessFully',
+                'message' => 'Created Successfully',
                 'data' => StudentPaymentResource::make($studentPayment),
             ]);
         } catch (\Exception $e) {
