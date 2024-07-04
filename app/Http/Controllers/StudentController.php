@@ -25,10 +25,12 @@ class StudentController extends Controller
     {
         DB::beginTransaction();
         try {
+            $image = $request->hasFile('image') ? $request->file('image') : '/students_image/female.jpg';
             $password = Str::random(10);
             $student = Student::create(array_merge([
                 'password' => Hash::make($password),
-                ...$request->except('password'),
+                'image' => $image,
+                ...$request->except('password', 'image'),
             ]));
             DB::commit();
 

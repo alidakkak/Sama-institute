@@ -21,7 +21,7 @@ class Semester extends Model
         return $this->hasMany(Exam::class);
     }
 
-    public function registration()
+    public function registrations()
     {
         return $this->hasMany(Registration::class);
     }

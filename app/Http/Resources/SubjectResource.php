@@ -15,14 +15,14 @@ class SubjectResource extends JsonResource
     public function toArray(Request $request): array
     {
         $teachers = $this->teachers->map(function ($teacher) {
-            return $teacher->only(['id', 'first_name', 'last_name']);
-        });
+            return $teacher->first_name . ' ' . $teacher->last_name;
+        })->implode(', ');
 
         return [
             'id' => $this->id,
             'name' => $this->name,
             'number_sessions_per_week' => $this->number_sessions_per_week,
-            'teachers' => $teachers,
+            'teacherName' => $teachers !== '' ? $teachers : null,
         ];
     }
 }

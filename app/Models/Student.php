@@ -26,11 +26,6 @@ class Student extends Authenticatable implements JWTSubject
         }
     }
 
-    public function classrooms()
-    {
-        return $this->belongsToMany(Classroom::class, 'student_classrooms', 'student_id', 'classroom_id');
-    }
-
     public function subjects()
     {
         return $this->belongsToMany(Subject::class, 'student_subjects', 'student_id', 'subject_id');
@@ -51,7 +46,7 @@ class Student extends Authenticatable implements JWTSubject
         return $this->hasMany(StudentPayment::class);
     }
 
-    public function registration()
+    public function registrations()
     {
         return $this->hasMany(Registration::class);
     }

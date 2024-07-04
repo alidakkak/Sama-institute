@@ -12,11 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class ClassroomController extends Controller
 {
-    public function index()
+    //// Get Student And Subject By Classroom ID
+    public function show($classroomId)
     {
-        $classroom = Classroom::all();
+        $classroom = Classroom::with(['subjects.teachers'])->find($classroomId);
+        if (! $classroom) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
 
-        return ClassroomResource::collection($classroom);
+        return ClassroomResource::make($classroom);
     }
 
     ////  Add Teacher To Subject And Classroom
@@ -86,16 +90,6 @@ class ClassroomController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    public function show($classroomId)
-    {
-        $classroom = Classroom::with(['subjects.teachers'])->find($classroomId);
-        if (! $classroom) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        return ClassroomResource::make($classroom);
     }
 
     public function delete($classroomId)

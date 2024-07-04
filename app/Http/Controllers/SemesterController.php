@@ -5,12 +5,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSemesterRequest;
 use App\Http\Requests\UpdateSemesterRequest;
 use App\Http\Resources\SemesterResource;
+use App\Http\Resources\StudentSubjectResource;
 use App\Models\Semester;
 use App\Models\Subject;
 use Illuminate\Support\Facades\DB;
 
 class SemesterController extends Controller
 {
+    /// Get Student And Subject By Semester ID
+    public function getStudentAndSubjectBySemesterID($semesterId)
+    {
+        $semester = Semester::find($semesterId);
+        if (!$semester) {
+            return response()->json(['message' => 'Semester not found'], 404);
+        }
+        return StudentSubjectResource::make($semester);
+    }
+
     public function index()
     {
         $semester = Semester::all();

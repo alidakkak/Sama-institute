@@ -11,7 +11,7 @@ class Scholarship extends Model
 
     protected $guarded = ['id'];
 
-    public function registration()
+    public function registrations()
     {
         return $this->hasMany(Registration::class);
     }

@@ -23,16 +23,16 @@ Route::post('login', [AuthController::class, 'login']);
 
 //// Semester
 Route::get('semesters', [SemesterController::class, 'index']);
+Route::get('getStudentAndSubjectBySemesterID/{semesterId}', [SemesterController::class, 'getStudentAndSubjectBySemesterID']);
 Route::post('semesters', [SemesterController::class, 'store']);
 Route::patch('semesters/{semesterId}', [SemesterController::class, 'update']);
 Route::get('semesters/{semesterId}', [SemesterController::class, 'show']);
 Route::delete('semesters/{semesterId}', [SemesterController::class, 'delete']);
 
 //// Classroom
-Route::get('classrooms', [ClassroomController::class, 'index']);
+Route::get('classrooms/{classroomId}', [ClassroomController::class, 'show']);
 Route::post('classrooms', [ClassroomController::class, 'store']);
 Route::patch('classrooms/{classroomId}', [ClassroomController::class, 'update']);
-Route::get('classrooms/{classroomId}', [ClassroomController::class, 'show']);
 Route::delete('classrooms/{classroomId}', [ClassroomController::class, 'delete']);
 Route::post('addTeacher', [ClassroomController::class, 'addTeacher']);
 
