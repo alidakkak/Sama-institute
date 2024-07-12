@@ -30,4 +30,9 @@ class Registration extends Model
     {
         return $this->belongsTo(Scholarship::class);
     }
+
+    public function studentSubject()
+    {
+        return $this->hasMany(StudentSubject::class);
+    }
 }

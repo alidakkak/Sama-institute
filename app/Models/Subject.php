@@ -23,7 +23,8 @@ class Subject extends Model
 
     public function teachers()
     {
-        return $this->belongsToMany(Teacher::class, 'subject_classrooms', 'subject_id', 'teacher_id');
+        return $this->belongsToMany(Teacher::class, 'subject_classrooms')
+            ->withPivot('classroom_id');
     }
 
     public function semester()

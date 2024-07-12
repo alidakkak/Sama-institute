@@ -16,9 +16,10 @@ class SemesterController extends Controller
     public function getStudentAndSubjectBySemesterID($semesterId)
     {
         $semester = Semester::find($semesterId);
-        if (!$semester) {
+        if (! $semester) {
             return response()->json(['message' => 'Semester not found'], 404);
         }
+
         return StudentSubjectResource::make($semester);
     }
 

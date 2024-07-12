@@ -10,4 +10,9 @@ class StudentSubject extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function registration()
+    {
+        return $this->belongsTo(Registration::class);
+    }
 }

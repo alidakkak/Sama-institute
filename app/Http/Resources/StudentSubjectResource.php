@@ -19,7 +19,7 @@ class StudentSubjectResource extends JsonResource
             'students' => $this->registrations->map(function ($registration) {
                 return [
                     'id' => $registration->student->id,
-                    'fullName' => $registration->student->first_name . ' ' . $registration->student->last_name,
+                    'fullName' => $registration->student->first_name.' '.$registration->student->last_name,
                 ];
             }),
         ];

@@ -22,7 +22,8 @@ class SemesterResource extends JsonResource
             'end_date' => $this->end_date,
             'actual_start_date' => $this->actual_start_date,
             'actual_completion_date' => $this->actual_completion_date,
-            'classroom' => ClassroomResource::collection($this->classrooms),
+            'classrooms' => ClassroomResource::collection($this->classrooms),
+            'subjects' => SubjectResource::collection($this->subject)
         ];
     }
 }

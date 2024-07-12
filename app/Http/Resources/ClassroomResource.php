@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Student;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,15 +19,25 @@ class ClassroomResource extends JsonResource
             return [
                 'id' => $this->id,
                 'name' => $this->name,
-                'subjects' => SubjectResource::collection($this->subjects),
+                'subjects' => $this->subjects->map(function ($subject) {
+                    $subjectClassroom = $subject->pivot;
+                    $teacher = Teacher::find($subjectClassroom->teacher_id);
+                    return [
+                        'id' => $subject->id,
+                        'name' => $subject->name,
+                        'number_sessions_per_week' => $subject->number_sessions_per_week,
+                        'teacherName' => $teacher ? $teacher->first_name . ' ' . $teacher->last_name : null,
+                    ];
+                }),
                 'students' => $this->registrations->map(function ($registration) {
                     return [
                         'id' => $registration->student->id,
-                        'fullName' => $registration->student->first_name . ' ' . $registration->student->last_name,
+                        'fullName' => $registration->student->first_name.' '.$registration->student->last_name,
                     ];
                 }),
             ];
         }
+
         return [
             'id' => $this->id,
             'name' => $this->name,

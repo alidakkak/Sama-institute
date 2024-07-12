@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CalculateCoursePriceRequest;
 use App\Http\Requests\StoreRegistrationRequest;
+use App\Http\Requests\UpdateRegistrationRequest;
 use App\Models\Registration;
 use App\Models\Scholarship;
+use App\Models\Student;
 use App\Models\StudentSubject;
 use Illuminate\Support\Facades\DB;
 
@@ -34,14 +36,14 @@ class RegistrationController extends Controller
         $rounding_threshold = $request->rounding_threshold;
         $scholarship = Scholarship::where('id', $request->scholarship_id)->value('discount');
 
-        // حساب السعر الافتراضي لكل جلسة
+        // Calculate the default price for each session
         $default_price_per_session = $total_price / $total_sessions;
 
-        // حساب أعلى وأقل سعر
+        // Calculate the highest and lowest price
         $highest_price = $default_price_per_session * (1 + $percentage_increase / 100);
         $lowest_price = $default_price_per_session * (1 - $percentage_increase / 100);
 
-        // الفرق بين أعلى وأقل سعر
+        // The difference between the highest and lowest price
         $price_difference = $highest_price - $lowest_price;
         $decrease_step = $price_difference / ($total_sessions - 1);
 
@@ -49,13 +51,13 @@ class RegistrationController extends Controller
         $cumulative_price = 0;
 
         for ($i = 0; $i < $total_sessions; $i++) {
-            // حساب السعر لكل جلسة
+            // Calculate the price per session
             $session_price = $highest_price - ($decrease_step * $i);
 
-            // حساب السعر التراكمي
+            // Calculate the cumulative price
             $cumulative_price += $session_price;
 
-            // تقريب السعر التراكمي باستخدام عتبة التقريب التي أدخلها المستخدم
+            // Round the cumulative price using the user-entered rounding threshold
             $rounded_price = round($cumulative_price / $rounding_threshold) * $rounding_threshold;
 
             $prices[] = [
@@ -81,6 +83,7 @@ class RegistrationController extends Controller
             $registration = Registration::create($request->all());
             foreach ($request->subjects as $subject) {
                 StudentSubject::create([
+                    'registration_id' => $registration->id,
                     'subject_id' => $subject['subject_id'],
                     'student_id' => $request->student_id,
                 ]);
@@ -99,4 +102,51 @@ class RegistrationController extends Controller
             ], 500);
         }
     }
+
+    public function update(UpdateRegistrationRequest $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $registration = Registration::find($id);
+
+            $studentPayments = $registration->student->studentPayment(function ($quray) {
+                return $quray->where('semester_id', $request->semester_id);
+            })
+                ->sum('price');
+            return $studentPayments;
+
+            if (!$registration) {
+                return response()->json([
+                    'message' => 'Registration not found',
+                ], 404);
+            }
+
+            $registration->update($request->all());
+
+            StudentSubject::where('registration_id', $id)->delete();
+
+            foreach ($request->subjects as $subject) {
+                StudentSubject::create([
+                    'registration_id' => $registration->id,
+                    'subject_id' => $subject['subject_id'],
+                    'student_id' => $request->student_id,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Successfully Updated',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'An error occurred',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
