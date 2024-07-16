@@ -32,8 +32,7 @@ class StudentController extends Controller
         $results = $students->map(function($student) {
             return [
                 'id' => $student->id,
-                'first_name' => $student->first_name,
-                'last_name' => $student->last_name,
+                'name' => $student->first_name . ' ' . $student->last_name,
                 'father_name' => $student->father_name,
                 'image' => url($student->image),
             ];
