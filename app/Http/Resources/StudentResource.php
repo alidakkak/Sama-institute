@@ -79,6 +79,7 @@ class StudentResource extends JsonResource
             'studentPayment' => StudentPaymentResource::collection($this->studentPayment),
             'Registration' => RegistrationResource::collection($this->registrations),
             'studentBehavior' => NoteResource::collection($this->notes),
+            'extraCharge' => ExtraChargeResource::collection($this->extraCharge),
             'marks' => ShowDetailsResource::collection($this->marks),
             'subjectResults' => $subjectResults->values()->all(),
         ];

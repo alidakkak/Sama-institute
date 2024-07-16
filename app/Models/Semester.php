@@ -35,4 +35,9 @@ class Semester extends Model
     {
         return $this->belongsTo(StudentPayment::class);
     }
+
+    public function extraCharge()
+    {
+        return $this->hasMany(ExtraCharge::class);
+    }
 }

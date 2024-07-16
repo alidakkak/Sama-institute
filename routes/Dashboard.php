@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ExtraChargeController;
 use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\NameExpenseController;
@@ -59,6 +60,13 @@ Route::post('notes', [NoteController::class, 'store']);
 Route::patch('notes/{noteId}', [NoteController::class, 'update']);
 Route::get('notes/{noteId}', [NoteController::class, 'show']);
 Route::delete('notes/{noteId}', [NoteController::class, 'delete']);
+
+//// ExtraCharge
+Route::get('extraCharges', [ExtraChargeController::class, 'index']);
+Route::post('extraCharges', [ExtraChargeController::class, 'store']);
+Route::patch('extraCharges/{extraChargeId}', [ExtraChargeController::class, 'update']);
+Route::get('extraCharges/{extraChargeId}', [ExtraChargeController::class, 'show']);
+Route::delete('extraCharges/{extraChargeId}', [ExtraChargeController::class, 'delete']);
 
 //// Subject
 Route::get('subjects', [SubjectController::class, 'index']);

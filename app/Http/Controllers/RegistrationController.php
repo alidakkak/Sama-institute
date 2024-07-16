@@ -62,7 +62,7 @@ class RegistrationController extends Controller
 
             $prices[] = [
                 'session_number' => $i + 1,
-                'session_price' => round($session_price, 0),
+                'session_price' => round($session_price),
                 'cumulative_price' => round($cumulative_price),
                 'rounded_price' => $rounded_price,
             ];
@@ -80,7 +80,11 @@ class RegistrationController extends Controller
     {
         try {
             DB::beginTransaction();
-            $registration = Registration::create($request->all());
+            $totalDuesWithoutDecrease = $request->scholarship_id ? $request->after_discount : $request->financialDues;
+            $registration = Registration::create(array_merge(
+                $request->all(),
+                ['total_dues_without_decrease' => $totalDuesWithoutDecrease]
+            ));
             foreach ($request->subjects as $subject) {
                 StudentSubject::create([
                     'registration_id' => $registration->id,
@@ -107,22 +111,34 @@ class RegistrationController extends Controller
     {
         try {
             DB::beginTransaction();
+            $totalDuesWithoutDecrease = $request->scholarship_id ? $request->after_discount : $request->financialDues;
 
             $registration = Registration::find($id);
 
-            $studentPayments = $registration->student->studentPayment(function ($quray) {
-                return $quray->where('semester_id', $request->semester_id);
-            })
-                ->sum('price');
-            return $studentPayments;
-
-            if (!$registration) {
+            if (! $registration) {
                 return response()->json([
                     'message' => 'Registration not found',
                 ], 404);
             }
 
-            $registration->update($request->all());
+            // Calculate student payments
+            $studentPayments = $registration->student->studentPayment()
+                ->where('semester_id', $request->semester_id)
+                ->sum('price');
+
+            $registration->update(array_merge(
+                $request->all(),
+                ['total_dues_without_decrease' => $totalDuesWithoutDecrease]
+            ));
+            if ($registration->scholarship_id !== null) {
+                $registration->update([
+                    'after_discount' => $registration->after_discount - $studentPayments,
+                ]);
+            } else {
+                $registration->update([
+                    'financialDues' => $registration->financialDues - $studentPayments,
+                ]);
+            }
 
             StudentSubject::where('registration_id', $id)->delete();
 
@@ -148,5 +164,4 @@ class RegistrationController extends Controller
             ], 500);
         }
     }
-
 }

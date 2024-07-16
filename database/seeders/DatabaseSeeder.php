@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '0937356470',
             'location' => 'ad',
             'password' => '00000000',
+            'image' => '/students_image/female.jpg',
         ]);
     }
 }

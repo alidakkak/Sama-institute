@@ -22,11 +22,13 @@ class ClassroomResource extends JsonResource
                 'subjects' => $this->subjects->map(function ($subject) {
                     $subjectClassroom = $subject->pivot;
                     $teacher = Teacher::find($subjectClassroom->teacher_id);
+
                     return [
                         'id' => $subject->id,
                         'name' => $subject->name,
+                        //     '$subjectClassroom' => $subjectClassroom,
                         'number_sessions_per_week' => $subject->number_sessions_per_week,
-                        'teacherName' => $teacher ? $teacher->first_name . ' ' . $teacher->last_name : null,
+                        'teacherName' => $teacher ? $teacher->first_name.' '.$teacher->last_name : null,
                     ];
                 }),
                 'students' => $this->registrations->map(function ($registration) {

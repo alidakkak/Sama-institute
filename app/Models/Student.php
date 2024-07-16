@@ -51,6 +51,12 @@ class Student extends Authenticatable implements JWTSubject
         return $this->hasMany(Registration::class);
     }
 
+    public function extraCharge()
+    {
+        return $this->hasMany(ExtraCharge::class);
+    }
+
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

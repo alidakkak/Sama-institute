@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('classroom_id')->constrained('classrooms')->cascadeOnDelete();
             $table->foreignId('scholarship_id')->nullable()->constrained('scholarships')->cascadeOnDelete();
             $table->double('total_number_of_sessions');
+            $table->double('total_dues_without_decrease');
             $table->double('financialDues');
             $table->double('after_discount')->nullable();
             $table->boolean('isComplete')->default(false);
