@@ -21,6 +21,28 @@ class StudentController extends Controller
         return StudentResource::collection($student);
     }
 
+    public function searchStudent(Request $request)
+    {
+        $search = '%' . $request->input('search') . '%';
+        $students = Student::where('id', 'LIKE', $search)
+            ->orWhere('first_name', 'LIKE', $search)
+            ->orWhere('last_name', 'LIKE', $search)
+            ->get();
+
+        $results = $students->map(function($student) {
+            return [
+                'id' => $student->id,
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
+                'father_name' => $student->father_name,
+                'image' => url($student->image),
+            ];
+        });
+
+        return response()->json($results);
+    }
+
+
     public function store(StoreStudentRequest $request)
     {
         DB::beginTransaction();

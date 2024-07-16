@@ -39,6 +39,7 @@ Route::post('addTeacher', [ClassroomController::class, 'addTeacher']);
 
 //// Student
 Route::get('students', [StudentController::class, 'index']);
+Route::get('searchStudents', [StudentController::class, 'searchStudent']);
 Route::post('students', [StudentController::class, 'store']);
 Route::post('students/{studentId}', [StudentController::class, 'update']);
 Route::get('students/{studentId}', [StudentController::class, 'show']);
