@@ -23,6 +23,7 @@ class RegistrationResource extends JsonResource
                 ? $this->after_discount
                 : $this->financialDues,
             'studentPayments' => StudentPaymentResource::collection($this->studentPayments),
+            'extraCharges' => ExtraChargeResource::collection($this->extraCharges),
         ];
     }
 }

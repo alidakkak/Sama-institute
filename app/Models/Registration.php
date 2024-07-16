@@ -40,4 +40,9 @@ class Registration extends Model
     {
         return $this->hasMany(StudentPayment::class, 'semester_id', 'semester_id');
     }
+
+    public function extraCharges()
+    {
+        return $this->hasMany(ExtraCharge::class, 'semester_id', 'semester_id');
+    }
 }

@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateExtraChargeRequest;
 use App\Http\Resources\ExtraChargeResource;
 use App\Models\ExtraCharge;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class ExtraChargeController extends Controller
 {

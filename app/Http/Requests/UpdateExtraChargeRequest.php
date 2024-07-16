@@ -26,7 +26,7 @@ class UpdateExtraChargeRequest extends FormRequest
             'semester_id' => 'integer"exists:semesters,id',
             'title' => 'string',
             'description' => 'string',
-            'price' => 'numeric'
+            'price' => 'numeric',
         ];
     }
 }

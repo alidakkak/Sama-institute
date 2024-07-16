@@ -26,7 +26,7 @@ class StoreExtraChargeRequest extends FormRequest
             'semester_id' => 'required|exists:semesters,id',
             'title' => 'required|string',
             'description' => 'required|string',
-            'price' => 'required|numeric'
+            'price' => 'required|numeric',
         ];
     }
 }

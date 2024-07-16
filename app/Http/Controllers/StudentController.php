@@ -18,7 +18,7 @@ class StudentController extends Controller
     {
         $students = Student::with('registrations')->get();
 
-        $results = $students->map(function($student) {
+        $results = $students->map(function ($student) {
             return [
                 'id' => $student->id,
                 'first_name' => $student->first_name,
@@ -26,26 +26,25 @@ class StudentController extends Controller
                 'father_name' => $student->father_name,
                 'date_of_birth' => $student->date_of_birth,
                 'date_of_registration' => optional($student->registrations->first())->created_at ?
-                    $student->registrations->first()->created_at->format('Y-m-d') : null
+                    $student->registrations->first()->created_at->format('Y-m-d') : null,
             ];
         });
 
         return response()->json($results);
     }
 
-
     public function searchStudent(Request $request)
     {
-        $search = '%' . $request->input('search') . '%';
+        $search = '%'.$request->input('search').'%';
         $students = Student::where('id', 'LIKE', $search)
             ->orWhere('first_name', 'LIKE', $search)
             ->orWhere('last_name', 'LIKE', $search)
             ->get();
 
-        $results = $students->map(function($student) {
+        $results = $students->map(function ($student) {
             return [
                 'id' => $student->id,
-                'name' => $student->first_name . ' ' . $student->last_name,
+                'name' => $student->first_name.' '.$student->last_name,
                 'father_name' => $student->father_name,
                 'image' => url($student->image),
             ];
@@ -53,7 +52,6 @@ class StudentController extends Controller
 
         return response()->json($results);
     }
-
 
     public function store(StoreStudentRequest $request)
     {

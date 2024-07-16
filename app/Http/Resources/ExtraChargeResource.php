@@ -20,7 +20,7 @@ class ExtraChargeResource extends JsonResource
             'price' => $this->price,
             'description' => $this->description,
             'semester_id' => $this->semester_id,
-            'semesterName' => $this->semester->name
+            'semesterName' => $this->semester->name,
         ];
     }
 }
