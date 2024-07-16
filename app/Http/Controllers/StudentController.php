@@ -16,10 +16,23 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $student = Student::all();
+        $students = Student::with('registrations')->get();
 
-        return StudentResource::collection($student);
+        $results = $students->map(function($student) {
+            return [
+                'id' => $student->id,
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
+                'father_name' => $student->father_name,
+                'date_of_birth' => $student->date_of_birth,
+                'date_of_registration' => optional($student->registrations->first())->created_at ?
+                    $student->registrations->first()->created_at->format('Y-m-d') : null
+            ];
+        });
+
+        return response()->json($results);
     }
+
 
     public function searchStudent(Request $request)
     {

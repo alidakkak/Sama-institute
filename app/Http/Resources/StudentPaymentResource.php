@@ -21,8 +21,8 @@ class StudentPaymentResource extends JsonResource
             'price' => $this->price,
             'created_at' => $this->created_at->format('d-m-Y'),
             'semester_id' => $this->semester_id,
-            'semesterName' => $this->semester->name
-            //            'Registration' => RegistrationResource::collection($this->semester->registration)
+            'semesterName' => $this->semester->name,
+             //'Registration' => RegistrationResource::collection($this->semester)
         ];
     }
 }

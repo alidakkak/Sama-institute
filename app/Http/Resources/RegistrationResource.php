@@ -18,9 +18,11 @@ class RegistrationResource extends JsonResource
             'id' => $this->id,
             'semester_id' => $this->semester_id,
             'semesterName' => $this->semester->name,
+            'totalPrice' => $this->total_dues_without_decrease,
             'TheRemainingAmountOf' => $this->scholarship_id !== null
                 ? $this->after_discount
                 : $this->financialDues,
+            'studentPayments' => StudentPaymentResource::collection($this->studentPayments),
         ];
     }
 }

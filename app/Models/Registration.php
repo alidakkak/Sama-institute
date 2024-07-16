@@ -35,4 +35,9 @@ class Registration extends Model
     {
         return $this->hasMany(StudentSubject::class);
     }
+
+    public function studentPayments()
+    {
+        return $this->hasMany(StudentPayment::class, 'semester_id', 'semester_id');
+    }
 }
