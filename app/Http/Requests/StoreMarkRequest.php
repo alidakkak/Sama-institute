@@ -23,6 +23,7 @@ class StoreMarkRequest extends FormRequest
     {
         return [
             'result' => 'required|array',
+            'date' => 'required|date',
             'result.*' => 'required|numeric|between:0,100',
             'subject_id' => ['required', 'numeric', 'exists:subjects,id'],
             'exam_id' => ['required', 'numeric', 'exists:exams,id'],

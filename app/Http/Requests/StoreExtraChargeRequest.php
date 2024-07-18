@@ -25,7 +25,7 @@ class StoreExtraChargeRequest extends FormRequest
             'student_id' => 'required|exists:students,id',
             'semester_id' => 'required|exists:semesters,id',
             'title' => 'required|string',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'price' => 'required|numeric',
         ];
     }

@@ -11,7 +11,7 @@ class UpdateMarkRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class UpdateMarkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'result' => 'numeric|between:0,100',
         ];
     }
 }

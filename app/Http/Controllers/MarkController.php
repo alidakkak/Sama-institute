@@ -25,6 +25,7 @@ class MarkController extends Controller
                 $mark = Mark::create([
                     'student_id' => $student_id,
                     'subject_id' => $data['subject_id'],
+                    'date' => $data['date'],
                     'exam_id' => $data['exam_id'],
                     'result' => $data['result'][$index],
                 ]);
@@ -50,7 +51,7 @@ class MarkController extends Controller
             if (! $mark) {
                 return response()->json(['message' => 'Not Found'], 404);
             }
-            $mark->update($request->all());
+            $mark->update($request->only('result'));
 
             return response()->json([
                 'message' => 'Updated SuccessFully',
