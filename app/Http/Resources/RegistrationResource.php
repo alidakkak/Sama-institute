@@ -25,8 +25,8 @@ class RegistrationResource extends JsonResource
             'totalPrice' => $this->total_dues_without_decrease,
             'theRemainingAmountOf' => $theRemainingAmountOf,
             'theAmountThatWasPaid' => $this->total_dues_without_decrease - $theRemainingAmountOf,
-            'studentPayments' => StudentPaymentResource::collection($this->studentPayments),
-            'extraCharges' => ExtraChargeResource::collection($this->extraCharges),
+            'studentPayments' => StudentPaymentResource::collection($this->studentPayments->where('student_id', $this->student_id)),
+            'extraCharges' => ExtraChargeResource::collection($this->extraCharges->where('student_id', $this->student_id)),
         ];
     }
 }
