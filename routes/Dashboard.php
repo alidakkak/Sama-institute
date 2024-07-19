@@ -84,7 +84,7 @@ Route::get('exams/{examId}', [ExamController::class, 'show']);
 Route::delete('exams/{examId}', [ExamController::class, 'delete']);
 
 //// Mark
-Route::get('marks', [MarkController::class, 'index']);
+Route::get('getMarks', [MarkController::class, 'getMarks']);
 Route::post('marks', [MarkController::class, 'store']);
 Route::patch('marks/{markId}', [MarkController::class, 'update']);
 Route::get('marks/{markId}', [MarkController::class, 'show']);

@@ -14,9 +14,10 @@ class RegistrationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-     $theRemainingAmountOf =   $this->scholarship_id !== null
-            ? $this->after_discount
-            : $this->financialDues;
+        $theRemainingAmountOf = $this->scholarship_id !== null
+               ? $this->after_discount
+               : $this->financialDues;
+
         return [
             'id' => $this->id,
             'semester_id' => $this->semester_id,

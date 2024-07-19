@@ -6,14 +6,19 @@ use App\Http\Requests\StoreMarkRequest;
 use App\Http\Requests\UpdateMarkRequest;
 use App\Http\Resources\MarkResource;
 use App\Models\Mark;
+use Illuminate\Support\Facades\Auth;
 
 class MarkController extends Controller
 {
-    public function index()
+    /// API For Flutter
+    public function getMarks()
     {
-        $mark = Mark::all();
+        $studentID = auth::guard('api_student')->user()->id;
+        $marks = Mark::where('student_id', $studentID)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return MarkResource::collection($mark);
+        return MarkResource::collection($marks);
     }
 
     public function store(StoreMarkRequest $request)

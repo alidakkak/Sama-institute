@@ -14,6 +14,8 @@ class MarkResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $status = $this->result >= 40 ? 'ناجح' : 'راسب';
+
         return [
             'id' => $this->id,
             'studentName' => $this->student->first_name.' '.$this->student->last_name,
@@ -21,6 +23,7 @@ class MarkResource extends JsonResource
             'subjectName' => $this->subject->name,
             'examName' => $this->exam->name,
             'result' => $this->result,
+            'status' => $status,
             'date' => $this->date,
         ];
     }
