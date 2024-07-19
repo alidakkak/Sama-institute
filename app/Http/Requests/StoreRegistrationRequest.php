@@ -31,8 +31,6 @@ class StoreRegistrationRequest extends FormRequest
             'subjects' => 'required|array',
             'subjects.*.subject_id' => 'required|exists:subjects,id',
             'financialDues' => 'required|numeric|min:0',
-            'after_discount' => 'nullable|numeric|min:0',
-            'total_number_of_sessions' => 'required|numeric|min:0',
         ];
     }
 

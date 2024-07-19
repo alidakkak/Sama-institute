@@ -19,7 +19,7 @@ class ShowDetailsResource extends JsonResource
             'result' => $this->result,
             'subjectName' => $this->subject->name,
             'examName' => $this->exam->name,
-            'date' => ($this->date)
+            'date' => ($this->date),
         ];
     }
 }

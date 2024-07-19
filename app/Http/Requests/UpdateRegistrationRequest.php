@@ -29,8 +29,6 @@ class UpdateRegistrationRequest extends FormRequest
             'subjects' => 'array',
             'subjects.*.subject_id' => 'exists:subjects,id',
             'financialDues' => 'numeric|min:0',
-            'after_discount' => 'nullable|numeric|min:0',
-            'total_number_of_sessions' => 'numeric|min:0',
         ];
     }
 }

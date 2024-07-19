@@ -16,7 +16,7 @@ class MarkResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'studentName' => $this->student->first_name . ' ' . $this->student->last_name,
+            'studentName' => $this->student->first_name.' '.$this->student->last_name,
             'studentID' => $this->student->id,
             'subjectName' => $this->subject->name,
             'examName' => $this->exam->name,

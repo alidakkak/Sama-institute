@@ -80,10 +80,14 @@ class RegistrationController extends Controller
     {
         try {
             DB::beginTransaction();
-            $totalDuesWithoutDecrease = $request->scholarship_id ? $request->after_discount : $request->financialDues;
+            $discount = Scholarship::where('id', $request->scholarship_id)->value('discount');
+            $after_discount = $request->financialDues * (1 - $discount / 100);
+            $totalDuesWithoutDecrease = $request->scholarship_id ? $after_discount : $request->financialDues;
             $registration = Registration::create(array_merge(
                 $request->all(),
-                ['total_dues_without_decrease' => $totalDuesWithoutDecrease]
+                ['total_dues_without_decrease' => $totalDuesWithoutDecrease,
+                    'after_discount' => $after_discount,
+                ]
             ));
             foreach ($request->subjects as $subject) {
                 StudentSubject::create([
@@ -111,7 +115,9 @@ class RegistrationController extends Controller
     {
         try {
             DB::beginTransaction();
-            $totalDuesWithoutDecrease = $request->scholarship_id ? $request->after_discount : $request->financialDues;
+            $discount = Scholarship::where('id', $request->scholarship_id)->value('discount');
+            $after_discount = $request->financialDues * (1 - $discount / 100);
+            $totalDuesWithoutDecrease = $request->scholarship_id ? $after_discount : $request->financialDues;
 
             $registration = Registration::find($id);
 
@@ -128,7 +134,9 @@ class RegistrationController extends Controller
 
             $registration->update(array_merge(
                 $request->all(),
-                ['total_dues_without_decrease' => $totalDuesWithoutDecrease]
+                ['total_dues_without_decrease' => $totalDuesWithoutDecrease, 'after_discount' => $after_discount,
+                    'scholarship_id' => $request->scholarship_id ? $request->scholarship_id : null,
+                ]
             ));
             if ($registration->scholarship_id !== null) {
                 $registration->update([

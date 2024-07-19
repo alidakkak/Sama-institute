@@ -14,14 +14,17 @@ class RegistrationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+     $theRemainingAmountOf =   $this->scholarship_id !== null
+            ? $this->after_discount
+            : $this->financialDues;
         return [
             'id' => $this->id,
             'semester_id' => $this->semester_id,
             'semesterName' => $this->semester->name,
+            'scholarship' => ScholarshipResource::make($this->scholarship),
             'totalPrice' => $this->total_dues_without_decrease,
-            'TheRemainingAmountOf' => $this->scholarship_id !== null
-                ? $this->after_discount
-                : $this->financialDues,
+            'theRemainingAmountOf' => $theRemainingAmountOf,
+            'theAmountThatWasPaid' => $this->total_dues_without_decrease - $theRemainingAmountOf,
             'studentPayments' => StudentPaymentResource::collection($this->studentPayments),
             'extraCharges' => ExtraChargeResource::collection($this->extraCharges),
         ];
