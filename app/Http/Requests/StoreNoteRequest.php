@@ -24,6 +24,7 @@ class StoreNoteRequest extends FormRequest
     {
         return [
             'student_id' => ['required', Rule::exists('students', 'id')],
+            'semester_id' => ['required', Rule::exists('semesters', 'id')],
             'title' => 'required|string',
         ];
     }

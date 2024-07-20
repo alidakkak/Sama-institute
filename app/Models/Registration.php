@@ -45,4 +45,14 @@ class Registration extends Model
     {
         return $this->hasMany(ExtraCharge::class, 'semester_id', 'semester_id');
     }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class, 'semester_id', 'semester_id');
+    }
+
+    public function marks()
+    {
+        return $this->hasMany(Mark::class, 'semester_id', 'semester_id');
+    }
 }

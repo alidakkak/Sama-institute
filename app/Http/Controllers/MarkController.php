@@ -30,6 +30,7 @@ class MarkController extends Controller
                 $mark = Mark::create([
                     'student_id' => $student_id,
                     'subject_id' => $data['subject_id'],
+                    'semester_id' => $data['semester_id'],
                     'date' => $data['date'],
                     'exam_id' => $data['exam_id'],
                     'result' => $data['result'][$index],

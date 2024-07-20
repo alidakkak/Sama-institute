@@ -23,7 +23,8 @@ class UpdateNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id' => ['required', Rule::exists('students', 'id')],
+            'student_id' => [Rule::exists('students', 'id')],
+            'semester_id' => [Rule::exists('semesters', 'id')],
             'title' => 'required|string',
         ];
     }

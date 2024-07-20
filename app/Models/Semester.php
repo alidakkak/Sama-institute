@@ -40,4 +40,14 @@ class Semester extends Model
     {
         return $this->hasMany(ExtraCharge::class);
     }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
+
+    public function marks()
+    {
+        return $this->hasMany(Mark::class);
+    }
 }

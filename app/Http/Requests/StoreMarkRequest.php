@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMarkRequest extends FormRequest
 {
@@ -29,6 +30,7 @@ class StoreMarkRequest extends FormRequest
             'exam_id' => ['required', 'numeric', 'exists:exams,id'],
             'student_id' => 'required|array',
             'student_id.*' => ['required', 'numeric', 'exists:students,id'],
+            'semester_id' => ['required', Rule::exists('semesters', 'id')],
         ];
     }
 }

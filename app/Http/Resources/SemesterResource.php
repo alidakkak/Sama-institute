@@ -33,7 +33,7 @@ class SemesterResource extends JsonResource
             'status' => $status,
             'classrooms' => ClassroomResource::collection($this->classrooms),
             'subjects' => SubjectResource::collection($this->subject),
-            'exams' => ExamResource::collection($this->exams)
+            'exams' => ExamResource::collection($this->exams),
         ];
     }
 }

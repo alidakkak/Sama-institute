@@ -17,35 +17,6 @@ class StudentResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-        $subjectResults = $this->marks->groupBy('subject_id')
-            ->map(function ($subjectGroup) {
-                $totalWeight = $subjectGroup->sum(function ($mark) {
-                    return $mark->exam->percent;
-                });
-
-                $weightedSum = $subjectGroup->reduce(function ($carry, $mark) {
-                    return $carry + $mark->result * ($mark->exam->percent / 100);
-                }, 0);
-
-                $weightedAverage = ($totalWeight > 0) ? ($weightedSum / $totalWeight) * 100 : 0;
-
-                $examResults = $subjectGroup->groupBy('exam_id')
-                    ->map(function ($examGroup) {
-                        return [
-                            'examName' => $examGroup->first()->exam->name,
-                            'average' => $examGroup->avg('result'),
-                            'weight' => $examGroup->first()->exam->percent,
-                        ];
-                    });
-
-                return [
-                    'subjectID' => $subjectGroup->first()->subject->id,
-                    'subjectName' => $subjectGroup->first()->subject->name,
-                    'average' => $weightedAverage,
-                    'exams' => $examResults->values()->all(),
-                ];
-            });
-
         $data = [
             'id' => $this->id,
             'first_name' => $this->first_name,
@@ -77,9 +48,6 @@ class StudentResource extends JsonResource
             'note' => $this->note,
             'image' => url($this->image),
             'Registration' => RegistrationResource::collection($this->registrations),
-            'studentBehavior' => NoteResource::collection($this->notes),
-            'marks' => ShowDetailsResource::collection($this->marks),
-            'subjectResults' => $subjectResults->values()->all(),
         ];
 
         if ($this->token) {
