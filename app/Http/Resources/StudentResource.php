@@ -17,6 +17,26 @@ class StudentResource extends JsonResource
 
     public function toArray(Request $request): array
     {
+        //// For Flutter
+        if ($request->route()->uri() === 'api/getInfoStudent') {
+            return [
+                'id' => $this->id,
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'phone_number' => $this->phone_number,
+                'image' => url($this->image),
+                'Registration' => $this->registrations->map(function ($registration) {
+                    return [
+                        'id' => $registration->id,
+                        'classroom' => $registration->classroom->name,
+                        'semester' => $registration->semester->name,
+                        'date' => $registration->created_at->format('Y-m-d'),
+                    ];
+                }),
+                'subjectResults' => $subjectResults->values()->all(),
+            ];
+        }
+
         $data = [
             'id' => $this->id,
             'first_name' => $this->first_name,
@@ -52,26 +72,6 @@ class StudentResource extends JsonResource
 
         if ($this->token) {
             $data['token'] = $this->token;
-        }
-
-        //// For Flutter
-        if ($request->route()->uri() === 'api/getInfoStudent') {
-            return [
-                'id' => $this->id,
-                'first_name' => $this->first_name,
-                'last_name' => $this->last_name,
-                'phone_number' => $this->phone_number,
-                'image' => url($this->image),
-                'Registration' => $this->registrations->map(function ($registration) {
-                    return [
-                        'id' => $registration->id,
-                        'classroom' => $registration->classroom->name,
-                        'semester' => $registration->semester->name,
-                        'date' => $registration->created_at->format('Y-m-d'),
-                    ];
-                }),
-                'subjectResults' => $subjectResults->values()->all(),
-            ];
         }
 
         return $data;

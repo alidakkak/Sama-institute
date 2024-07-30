@@ -22,10 +22,12 @@ class UpdateSemesterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //    'name' => 'required',
+            'name' => 'string',
             'price' => 'numeric',
             'start_date' => 'date',
             'end_date' => 'date',
+            'period' => 'numeric',
+            'unit' => 'in:month,week,day,hour',
             'actual_start_date' => 'nullable|date',
             'actual_completion_date' => 'nullable|date',
             'subjects' => 'array',

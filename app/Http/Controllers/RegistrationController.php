@@ -34,7 +34,6 @@ class RegistrationController extends Controller
         $total_price = $request->price;
         $percentage_increase = $request->percentage_increase_over_the_default_price;
         $rounding_threshold = $request->rounding_threshold;
-        $scholarship = Scholarship::where('id', $request->scholarship_id)->value('discount');
 
         // Calculate the default price for each session
         $default_price_per_session = $total_price / $total_sessions;
@@ -42,36 +41,56 @@ class RegistrationController extends Controller
         // Calculate the highest and lowest price
         $highest_price = $default_price_per_session * (1 + $percentage_increase / 100);
         $lowest_price = $default_price_per_session * (1 - $percentage_increase / 100);
-
         // The difference between the highest and lowest price
         $price_difference = $highest_price - $lowest_price;
-        $decrease_step = $price_difference / ($total_sessions - 1);
 
         $prices = [];
         $cumulative_price = 0;
 
-        for ($i = 0; $i < $total_sessions; $i++) {
-            // Calculate the price per session
-            $session_price = $highest_price - ($decrease_step * $i);
+        if (fmod($total_sessions, 1) == 0.5) {
+            $decrease_step = $price_difference / (($total_sessions * 2) - 1);
 
-            // Calculate the cumulative price
-            $cumulative_price += $session_price;
+            for ($i = 0; $i < $total_sessions * 2; $i++) {
+                // Calculate the price per session
+                $session_price = ($highest_price - ($decrease_step * $i)) / 2;
 
-            // Round the cumulative price using the user-entered rounding threshold
-            $rounded_price = round($cumulative_price / $rounding_threshold) * $rounding_threshold;
+                // Calculate the cumulative price
+                $cumulative_price += $session_price;
 
-            $prices[] = [
-                'session_number' => $i + 1,
-                'session_price' => round($session_price),
-                'cumulative_price' => round($cumulative_price),
-                'rounded_price' => $rounded_price,
-            ];
+                // Round the cumulative price using the user-entered rounding threshold
+                $rounded_price = round($cumulative_price / $rounding_threshold) * $rounding_threshold;
+
+                $prices[] = [
+                    'session_number' => ($i + 1) / 2,
+                    'session_price' => round($session_price),
+                    'cumulative_price' => round($cumulative_price),
+                    'rounded_price' => $rounded_price,
+                ];
+            }
+        } else {
+            $decrease_step = $price_difference / ($total_sessions - 1);
+            for ($i = 0; $i < $total_sessions; $i++) {
+                // Calculate the price per session
+                $session_price = $highest_price - ($decrease_step * $i);
+
+                // Calculate the cumulative price
+                $cumulative_price += $session_price;
+
+                // Round the cumulative price using the user-entered rounding threshold
+                $rounded_price = round($cumulative_price / $rounding_threshold) * $rounding_threshold;
+
+                $prices[] = [
+                    'session_number' => $i + 1,
+                    'session_price' => round($session_price),
+                    'cumulative_price' => round($cumulative_price),
+                    'rounded_price' => $rounded_price,
+                ];
+            }
         }
 
         return response()->json([
             'table' => $prices,
             'finalPrice' => $rounded_price,
-            'afterDiscount' => $rounded_price * (1 - $scholarship / 100),
             'default_price_per_session' => $default_price_per_session,
         ]);
     }
@@ -81,7 +100,7 @@ class RegistrationController extends Controller
         try {
             DB::beginTransaction();
             $discount = Scholarship::where('id', $request->scholarship_id)->value('discount');
-            $after_discount = $request->financialDues * (1 - $discount / 100);
+            $after_discount = $request->financialDues - $discount;
             $totalDuesWithoutDecrease = $request->scholarship_id ? $after_discount : $request->financialDues;
             $registration = Registration::create(array_merge(
                 $request->all(),

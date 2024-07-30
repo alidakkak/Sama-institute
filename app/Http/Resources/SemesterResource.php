@@ -28,12 +28,15 @@ class SemesterResource extends JsonResource
             'price' => $this->price,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
+            'period' => $this->period,
+            'unit' => $this->unit,
             'actual_start_date' => $this->actual_start_date,
             'actual_completion_date' => $this->actual_completion_date,
             'status' => $status,
             'classrooms' => ClassroomResource::collection($this->classrooms),
             'subjects' => SubjectResource::collection($this->subject),
             'exams' => ExamResource::collection($this->exams),
+            'scholarship' => ScholarshipResource::collection($this->scholarships),
         ];
     }
 }

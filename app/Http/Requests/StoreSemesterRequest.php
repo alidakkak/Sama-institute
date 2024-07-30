@@ -26,6 +26,8 @@ class StoreSemesterRequest extends FormRequest
             'price' => 'required|numeric',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
+            'period' => 'required|numeric',
+            'unit' => 'required|in:month,week,day,hour',
             'actual_start_date' => 'nullable|date',
             'actual_completion_date' => 'nullable|date',
             'subjects' => 'required|array',

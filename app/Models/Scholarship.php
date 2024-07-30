@@ -15,4 +15,9 @@ class Scholarship extends Model
     {
         return $this->hasMany(Registration::class);
     }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
+    }
 }

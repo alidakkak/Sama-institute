@@ -6,6 +6,7 @@ use App\Http\Requests\StoreMarkRequest;
 use App\Http\Requests\UpdateMarkRequest;
 use App\Http\Resources\MarkResource;
 use App\Models\Mark;
+use App\Models\Semester;
 use Illuminate\Support\Facades\Auth;
 
 class MarkController extends Controller
@@ -71,14 +72,36 @@ class MarkController extends Controller
         }
     }
 
-    public function show($markId)
+    //// Get Student By SemesterID, SubjectID, ExamID
+    public function showStudent(StoreMarkRequest $request)
     {
-        $mark = Mark::find($markId);
-        if (! $mark) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
+        $semesterID = $request->input('semester_id');
+        $subjectID = $request->input('subject_id');
+        $examID = $request->input('exam_id');
 
-        return MarkResource::make($mark);
+        $semester = Semester::findOrFail($semesterID);
+
+        $students = $semester->registrations()
+            ->whereHas('student.subjects', function ($query) use ($subjectID) {
+                $query->where('subject_id', $subjectID);
+            })
+            ->whereDoesntHave('student.marks', function ($query) use ($subjectID, $examID, $semesterID) {
+                $query->where('subject_id', $subjectID)
+                    ->where('exam_id', $examID)
+                    ->where('semester_id', $semesterID);
+            })
+            ->with('student')
+            ->get()
+            ->map(function ($registration) {
+                $student = $registration->student;
+
+                return [
+                    'id' => $student->id,
+                    'full_name' => $student->first_name.' '.$student->last_name,
+                ];
+            });
+
+        return response()->json(['student' => $students], 200);
     }
 
     public function delete($markId)

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->double('discount');
+            $table->foreignId('semester_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

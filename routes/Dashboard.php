@@ -87,7 +87,7 @@ Route::delete('exams/{examId}', [ExamController::class, 'delete']);
 Route::get('getMarks', [MarkController::class, 'getMarks']);
 Route::post('marks', [MarkController::class, 'store']);
 Route::patch('marks/{markId}', [MarkController::class, 'update']);
-Route::get('marks/{markId}', [MarkController::class, 'show']);
+Route::get('showStudent', [MarkController::class, 'showStudent']);
 Route::delete('marks/{markId}', [MarkController::class, 'delete']);
 
 //// Scholarship
@@ -96,6 +96,7 @@ Route::post('scholarships', [ScholarshipController::class, 'store']);
 Route::patch('scholarships/{scholarshipId}', [ScholarshipController::class, 'update']);
 Route::get('scholarships/{scholarshipId}', [ScholarshipController::class, 'show']);
 Route::delete('scholarships/{scholarshipId}', [ScholarshipController::class, 'delete']);
+Route::post('specialDiscount', [ScholarshipController::class, 'specialDiscount']);
 
 //// Teacher
 Route::get('teachers', [TeacherController::class, 'index']);
@@ -106,7 +107,7 @@ Route::patch('teachers/{teacherId}', [TeacherController::class, 'update']);
 Route::get('teachers/{teacherId}', [TeacherController::class, 'show']);
 Route::delete('teachers/{teacherId}', [TeacherController::class, 'delete']);
 
-//// Student Payment
+//// Teacher Salary
 Route::get('teacherSalary', [TeacherSalaryController::class, 'index']);
 Route::post('teacherSalary', [TeacherSalaryController::class, 'store']);
 Route::patch('teacherSalary/{Id}', [TeacherSalaryController::class, 'update']);

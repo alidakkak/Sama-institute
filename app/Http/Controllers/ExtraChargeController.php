@@ -6,7 +6,9 @@ use App\Http\Requests\StoreExtraChargeRequest;
 use App\Http\Requests\UpdateExtraChargeRequest;
 use App\Http\Resources\ExtraChargeResource;
 use App\Models\ExtraCharge;
+use App\Models\Registration;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ExtraChargeController extends Controller
 {
@@ -31,13 +33,36 @@ class ExtraChargeController extends Controller
     public function store(StoreExtraChargeRequest $request)
     {
         try {
-            $extraCharge = ExtraCharge::create($request->all());
+            DB::beginTransaction();
+            ExtraCharge::create($request->all());
+            $registration = Registration::where('student_id', $request->student_id)
+                ->where('semester_id', $request->semester_id)->first();
+            if (! $registration) {
+                DB::rollback();
+
+                return response()->json(['message' => 'الطالب غير مسجل في الدورة'], 404);
+            }
+            $registration->update([
+                'total_dues_without_decrease' => $registration->total_dues_without_decrease + $request->price,
+            ]);
+            if ($registration->scholarship_id !== null) {
+                $registration->update([
+                    'after_discount' => $registration->after_discount + $request->price,
+                ]);
+            } else {
+                $registration->update([
+                    'financialDues' => $registration->financialDues + $request->price,
+                ]);
+            }
+
+            DB::commit();
 
             return response()->json([
                 'message' => 'Created SuccessFully',
-                'data' => ExtraChargeResource::make($extraCharge),
             ]);
         } catch (\Exception $e) {
+            DB::rollback();
+
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),

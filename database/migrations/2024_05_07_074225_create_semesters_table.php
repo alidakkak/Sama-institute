@@ -17,6 +17,8 @@ return new class extends Migration
             $table->double('price');
             $table->date('start_date');
             $table->date('end_date');
+            $table->double('period');
+            $table->string('unit');
             $table->date('actual_start_date')->nullable();
             $table->date('actual_completion_date')->nullable();
             $table->timestamps();

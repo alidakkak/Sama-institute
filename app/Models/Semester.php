@@ -50,4 +50,9 @@ class Semester extends Model
     {
         return $this->hasMany(Mark::class);
     }
+
+    public function scholarships()
+    {
+        return $this->hasMany(Scholarship::class);
+    }
 }

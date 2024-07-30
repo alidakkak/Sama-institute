@@ -22,6 +22,14 @@ class StoreMarkRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->route()->uri() === 'api/showStudent') {
+            return [
+                'subject_id' => ['required', 'numeric', 'exists:subjects,id'],
+                'exam_id' => ['required', 'numeric', 'exists:exams,id'],
+                'semester_id' => ['required', Rule::exists('semesters', 'id')],
+            ];
+        }
+
         return [
             'result' => 'required|array',
             'date' => 'required|date',

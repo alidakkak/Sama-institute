@@ -24,7 +24,7 @@ class UpdateScholarshipRequest extends FormRequest
         return [
             'name' => 'required|string',
             'description' => 'required|string',
-            'discount' => 'required|numeric|min:1,max:100',
+            'discount' => 'required|numeric',
         ];
     }
 }

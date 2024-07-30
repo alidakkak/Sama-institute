@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreScholarshipRequest;
 use App\Http\Requests\UpdateScholarshipRequest;
 use App\Http\Resources\ScholarshipResource;
+use App\Models\Registration;
 use App\Models\Scholarship;
+use Illuminate\Http\Request;
 
 class ScholarshipController extends Controller
 {
@@ -20,6 +22,10 @@ class ScholarshipController extends Controller
     {
         try {
             $scholarship = Scholarship::create($request->all());
+
+            if ($request->discount > $scholarship->semester->price) {
+                return response()->json(['message' => 'سعر الحسم اكبر من سعر الدورة'], 422);
+            }
 
             return response()->json([
                 'message' => 'Created SuccessFully',
@@ -83,5 +89,27 @@ class ScholarshipController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function specialDiscount(Request $request)
+    {
+        $registration = Registration::where('id', $request->registrationID)->first();
+        if (! $registration) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+        if ($request->discount > $registration->total_dues_without_decrease) {
+            return response()->json(['message' => 'الحسم اكبر من المستحقات الدفع الكلية للطالب'], 422);
+        }
+        if ($registration->scholarship_id !== null) {
+            $registration->update([
+                'after_discount' => $registration->after_discount - $request->discount,
+            ]);
+        } else {
+            $registration->update([
+                'financialDues' => $registration->financialDues - $request->discount,
+            ]);
+        }
+
+        return response()->json(['message' => 'تمت عملية الحسم بنجاح']);
     }
 }

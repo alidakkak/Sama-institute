@@ -43,6 +43,11 @@ class RegistrationResource extends JsonResource
                 ];
             });
 
+        $totalWeightedSum = $subjectResults->sum('average');
+        $subjectCount = $subjectResults->count();
+
+        $totalGPAForAllSubjects = ($subjectCount > 0) ? ($totalWeightedSum / $subjectCount) : 0;
+
         $theRemainingAmountOf = $this->scholarship_id !== null
                ? $this->after_discount
                : $this->financialDues;
@@ -60,6 +65,7 @@ class RegistrationResource extends JsonResource
             'studentBehavior' => NoteResource::collection($this->notes->where('student_id', $this->student_id)),
             'marks' => ShowDetailsResource::collection($this->marks->where('student_id', $this->student_id)),
             'subjectResults' => $subjectResults->values()->all(),
+            'total_GPA_For_All_Subjects' => $totalGPAForAllSubjects,
         ];
     }
 }

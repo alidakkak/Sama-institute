@@ -19,8 +19,7 @@ class ExtraChargeResource extends JsonResource
             'title' => $this->title,
             'price' => $this->price,
             'description' => $this->description,
-            'semester_id' => $this->semester_id,
-            'semesterName' => $this->semester->name,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }
 }
