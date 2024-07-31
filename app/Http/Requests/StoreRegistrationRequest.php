@@ -23,6 +23,13 @@ class StoreRegistrationRequest extends FormRequest
      */
     public function rules(): array
     {
+        if (request()->route()->uri() === 'api/withdrawalFromTheCourse') {
+            return [
+                'registration_id' => 'required|exists:registrations,id',
+                'value' => 'required|numeric',
+                'number' => 'required|numeric',
+            ];
+        }
         return [
             'student_id' => 'required|exists:students,id',
             'semester_id' => 'required|exists:semesters,id',

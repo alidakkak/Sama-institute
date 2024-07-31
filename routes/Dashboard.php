@@ -49,6 +49,7 @@ Route::delete('students/{studentId}', [StudentController::class, 'delete']);
 Route::post('registrations', [RegistrationController::class, 'store']);
 Route::patch('registrations/{id}', [RegistrationController::class, 'update']);
 Route::post('calculateCoursePrice', [RegistrationController::class, 'calculateCoursePrice']);
+Route::post('withdrawalFromTheCourse', [RegistrationController::class, 'withdrawalFromTheCourse']);
 
 //// Student Payment
 Route::get('studentPayment', [StudentPaymentController::class, 'index']);

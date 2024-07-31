@@ -9,6 +9,7 @@ use App\Models\Registration;
 use App\Models\Scholarship;
 use App\Models\Student;
 use App\Models\StudentSubject;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class RegistrationController extends Controller
@@ -135,7 +136,7 @@ class RegistrationController extends Controller
         try {
             DB::beginTransaction();
             $discount = Scholarship::where('id', $request->scholarship_id)->value('discount');
-            $after_discount = $request->financialDues * (1 - $discount / 100);
+            $after_discount = $request->financialDues - $discount;
             $totalDuesWithoutDecrease = $request->scholarship_id ? $after_discount : $request->financialDues;
 
             $registration = Registration::find($id);
@@ -151,19 +152,24 @@ class RegistrationController extends Controller
                 ->where('semester_id', $request->semester_id)
                 ->sum('price');
 
+            // Calculate student ExtraCharge
+            $extraCharge = $registration->student->extraCharge()
+                ->where('semester_id', $request->semester_id)
+                ->sum('price');
+
             $registration->update(array_merge(
                 $request->all(),
-                ['total_dues_without_decrease' => $totalDuesWithoutDecrease, 'after_discount' => $after_discount,
+                ['total_dues_without_decrease' => $totalDuesWithoutDecrease + $extraCharge, 'after_discount' => $after_discount,
                     'scholarship_id' => $request->scholarship_id ? $request->scholarship_id : null,
                 ]
             ));
             if ($registration->scholarship_id !== null) {
                 $registration->update([
-                    'after_discount' => $registration->after_discount - $studentPayments,
+                    'after_discount' => $registration->after_discount - $studentPayments + $extraCharge,
                 ]);
             } else {
                 $registration->update([
-                    'financialDues' => $registration->financialDues - $studentPayments,
+                    'financialDues' => $registration->financialDues - $studentPayments + $extraCharge,
                 ]);
             }
 
@@ -190,5 +196,41 @@ class RegistrationController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function withdrawalFromTheCourse(StoreRegistrationRequest $request)
+    {
+        $registration = Registration::where('id', $request->registration_id)->first();
+        if (! $registration) {
+            return response()->json(['message' => 'Registration not found'], 404);
+        }
+        $semesterPrice = $registration->total_dues_without_decrease;
+        $semesterPeriod = $registration->semester->period;
+        $finalPrice = ($semesterPrice / $semesterPeriod) * $request->value * $request->number;
+        $registration->update([
+            'total_dues_without_decrease' => $finalPrice,
+            'status' => \App\Status\Student::Withdrawn,
+        ]);
+
+        // Calculate student payments
+        $studentPayments = $registration->student->studentPayment()
+            ->where('semester_id', $registration->semester_id)
+            ->sum('price');
+
+        // Calculate student ExtraCharge
+        $extraCharge = $registration->student->extraCharge()
+            ->where('semester_id', $registration->semester_id)
+            ->sum('price');
+
+        if ($registration->scholarship_id !== null) {
+            $registration->update([
+                'after_discount' => $finalPrice - $studentPayments + $extraCharge,
+            ]);
+        } else {
+            $registration->update([
+                'financialDues' => $finalPrice - $studentPayments + $extraCharge,
+            ]);
+        }
+        return response()->json(['message' => 'Successfully Withdrawn']);
     }
 }

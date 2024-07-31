@@ -56,6 +56,7 @@ class RegistrationResource extends JsonResource
             'id' => $this->id,
             'semester_id' => $this->semester_id,
             'semesterName' => $this->semester->name,
+            'status' => $this->status,
             'scholarship' => ScholarshipResource::make($this->scholarship),
             'totalPrice' => $this->total_dues_without_decrease,
             'theRemainingAmountOf' => $theRemainingAmountOf,
