@@ -20,10 +20,11 @@ class ExtraChargeController extends Controller
     }
 
     /// API For Flutter To Get ExtraCharge
-    public function getExtraCharge()
+    public function getExtraCharge($semesterID)
     {
         $studentID = auth::guard('api_student')->user()->id;
         $extraCharge = ExtraCharge::where('student_id', $studentID)
+            ->where('semester_id', $semesterID)
             ->orderBy('created_at', 'desc')
             ->get();
 

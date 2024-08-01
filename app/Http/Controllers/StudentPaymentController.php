@@ -20,10 +20,11 @@ class StudentPaymentController extends Controller
     }
 
     //// API For Flutter To Get Student Payment
-    public function getStudentPayment()
+    public function getStudentPayment($semesterID)
     {
         $student = auth('api_student')->user()->id;
         $payment = StudentPayment::where('student_id', $student)
+            ->where('semester_id', $semesterID)
             ->orderBy('created_at', 'desc')
             ->get();
 

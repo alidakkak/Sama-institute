@@ -231,6 +231,7 @@ class RegistrationController extends Controller
                 'financialDues' => $finalPrice - $studentPayments + $extraCharge,
             ]);
         }
+
         return response()->json(['message' => 'Successfully Withdrawn']);
     }
 }

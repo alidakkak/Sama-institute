@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ExtraChargeController;
+use App\Http\Controllers\MarkController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentPaymentController;
@@ -23,11 +25,17 @@ Route::group(['middleware' => 'auth:api_student'], function () {
     Route::get('getInfoStudent', [StudentController::class, 'getInfoStudent']);
 
     /// Note
-    Route::get('getNotes', [NoteController::class, 'getNote']);
+    Route::get('getNotes/{semesterID}', [NoteController::class, 'getNote']);
 
     /// Subject
-    Route::get('getSubjects', [SubjectController::class, 'getSubject']);
+    Route::get('getSubjects/{semesterID}', [SubjectController::class, 'getSubject']);
 
     /// Student Payment
-    Route::get('getStudentPayment', [StudentPaymentController::class, 'getStudentPayment']);
+    Route::get('getStudentPayment/{semesterID}', [StudentPaymentController::class, 'getStudentPayment']);
+
+    /// Marks
+    Route::get('getMarks/{semesterID}', [MarkController::class, 'getMarks']);
+
+    /// ExtraCharge
+    Route::get('getExtraCharges/{semesterID}', [ExtraChargeController::class, 'getExtraCharge']);
 });

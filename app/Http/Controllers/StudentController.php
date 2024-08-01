@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
+use App\Models\DeviceToken;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -156,6 +157,7 @@ class StudentController extends Controller
         $validator = Validator::make($request->all(), [
             'phone_number' => 'required',
             'password' => 'required|string|min:6',
+            'device_token' => 'required|string',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -163,6 +165,13 @@ class StudentController extends Controller
         if (! $token = auth('api_student')->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
+        $student = auth('api_student')->user();
+
+        DeviceToken::updateOrCreate(
+            ['student_id' => $student->id, 'token' => $request->device_token],
+            ['token' => $request->device_token]
+        );
 
         return $this->createNewToken($token);
     }

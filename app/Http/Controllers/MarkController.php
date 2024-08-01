@@ -12,10 +12,11 @@ use Illuminate\Support\Facades\Auth;
 class MarkController extends Controller
 {
     /// API For Flutter
-    public function getMarks()
+    public function getMarks($semesterID)
     {
         $studentID = auth::guard('api_student')->user()->id;
         $marks = Mark::where('student_id', $studentID)
+            ->where('semester_id', $semesterID)
             ->orderBy('created_at', 'desc')
             ->get();
 

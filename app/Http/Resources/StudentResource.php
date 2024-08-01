@@ -25,15 +25,7 @@ class StudentResource extends JsonResource
                 'last_name' => $this->last_name,
                 'phone_number' => $this->phone_number,
                 'image' => url($this->image),
-                'Registration' => $this->registrations->map(function ($registration) {
-                    return [
-                        'id' => $registration->id,
-                        'classroom' => $registration->classroom->name,
-                        'semester' => $registration->semester->name,
-                        'date' => $registration->created_at->format('Y-m-d'),
-                    ];
-                }),
-                'subjectResults' => $subjectResults->values()->all(),
+                'Registration' => RegistrationResource::collection($this->registrations),
             ];
         }
 

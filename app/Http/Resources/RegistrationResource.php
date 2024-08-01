@@ -52,6 +52,23 @@ class RegistrationResource extends JsonResource
                ? $this->after_discount
                : $this->financialDues;
 
+        if (request()->route()->uri() === 'api/getInfoStudent') {
+            return [
+                'id' => $this->id,
+                'classroom' => $this->classroom->name,
+                'semesterID' => $this->semester->id,
+                'semester' => $this->semester->name,
+                'date' => $this->created_at->format('Y-m-d'),
+                'status' => $this->status,
+                'scholarship' => ScholarshipResource::make($this->scholarship),
+                'totalPrice' => $this->total_dues_without_decrease,
+                'theRemainingAmountOf' => $theRemainingAmountOf,
+                'theAmountThatWasPaid' => $this->total_dues_without_decrease - $theRemainingAmountOf,
+                'subjectResults' => $subjectResults->values()->all(),
+                'total_GPA_For_All_Subjects' => $totalGPAForAllSubjects,
+            ];
+        }
+
         return [
             'id' => $this->id,
             'semester_id' => $this->semester_id,

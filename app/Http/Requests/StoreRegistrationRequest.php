@@ -30,6 +30,7 @@ class StoreRegistrationRequest extends FormRequest
                 'number' => 'required|numeric',
             ];
         }
+
         return [
             'student_id' => 'required|exists:students,id',
             'semester_id' => 'required|exists:semesters,id',

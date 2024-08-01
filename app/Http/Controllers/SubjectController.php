@@ -19,11 +19,13 @@ class SubjectController extends Controller
     }
 
     /// API For Flutter To Get Subject
-    public function getSubject()
+    public function getSubject($semesterID)
     {
         $studentID = auth::guard('api_student')->user()->id;
         $subjectIDs = StudentSubject::where('student_id', $studentID)->pluck('subject_id');
-        $subjects = Subject::whereIn('id', $subjectIDs)->get();
+        $subjects = Subject::whereIn('id', $subjectIDs)
+            ->where('semester_id', $semesterID)
+            ->get();
 
         return SubjectResource::collection($subjects);
     }

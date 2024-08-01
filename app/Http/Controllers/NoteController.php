@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Http\Resources\NoteResource;
+use App\Models\DeviceToken;
 use App\Models\Note;
+use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Auth;
 
 class NoteController extends Controller
@@ -18,10 +20,11 @@ class NoteController extends Controller
     }
 
     /// API For Flutter To Get Nots
-    public function getNote()
+    public function getNote($semesterID)
     {
         $studentID = auth::guard('api_student')->user()->id;
         $note = Note::where('student_id', $studentID)
+            ->where('semester_id', $semesterID)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -32,6 +35,15 @@ class NoteController extends Controller
     {
         try {
             $note = Note::create($request->all());
+
+            $title = 'New Note Added';
+            $body = 'A new note has been added for the student.';
+            /// Device Key
+            $FcmToken = DeviceToken::where('student_id', $note->student_id)->pluck('token')->toArray();
+
+            $data = ['note_id' => $note->id];
+
+            FirebaseService::BasicSendNotification($title, $body, $FcmToken, $data);
 
             return response()->json([
                 'message' => 'Created SuccessFully',
