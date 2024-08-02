@@ -38,4 +38,7 @@ Route::group(['middleware' => 'auth:api_student'], function () {
 
     /// ExtraCharge
     Route::get('getExtraCharges/{semesterID}', [ExtraChargeController::class, 'getExtraCharge']);
+
+    /// Get Student Registration
+    Route::get('getStudentRegistration', [StudentController::class, 'getStudentRegistration']);
 });

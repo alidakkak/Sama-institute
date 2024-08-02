@@ -11,6 +11,8 @@ class DeviceToken extends Model
 
     protected $guarded = ['id'];
 
+    protected $table = 'device_tokens';
+
     public function student()
     {
         return $this->belongsTo(Student::class);

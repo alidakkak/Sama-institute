@@ -152,12 +152,30 @@ class StudentController extends Controller
         return StudentResource::make($student);
     }
 
+    public function getStudentRegistration()
+    {
+        $student = auth('api_student')->user();
+        if (! $student) {
+            return response()->json(['message' => 'No authenticated student found'], 404);
+        }
+
+        return response()->json(
+            $student->registrations->map(function ($registration) {
+                return [
+                    'semesterID' => $registration->semester->id,
+                    'semester' => $registration->semester->name,
+                ];
+            })
+        );
+    }
+
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'phone_number' => 'required',
             'password' => 'required|string|min:6',
-            'device_token' => 'required|string',
+//            'device_token' => 'required|string',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -169,8 +187,8 @@ class StudentController extends Controller
         $student = auth('api_student')->user();
 
         DeviceToken::updateOrCreate(
-            ['student_id' => $student->id, 'token' => $request->device_token],
-            ['token' => $request->device_token]
+            ['student_id' => $student->id, 'device_token' => $request->device_token],
+            ['student_id' => $student->id, 'device_token' => $request->device_token]
         );
 
         return $this->createNewToken($token);
