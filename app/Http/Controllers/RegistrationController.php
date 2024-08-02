@@ -7,6 +7,7 @@ use App\Http\Requests\StoreRegistrationRequest;
 use App\Http\Requests\UpdateRegistrationRequest;
 use App\Models\Registration;
 use App\Models\Scholarship;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentSubject;
 use Illuminate\Http\Request;
@@ -101,12 +102,15 @@ class RegistrationController extends Controller
         try {
             DB::beginTransaction();
             $discount = Scholarship::where('id', $request->scholarship_id)->value('discount');
+            $numberOfWeeksOfTheCycle = Semester::where('id', $request->semester_id)->value('period');
             $after_discount = $request->financialDues - $discount;
             $totalDuesWithoutDecrease = $request->scholarship_id ? $after_discount : $request->financialDues;
+            $amountOfDelay = $request->financialDues / $numberOfWeeksOfTheCycle;
+            $priceOfDelay = $amountOfDelay * $request->amountOfDelay;
             $registration = Registration::create(array_merge(
                 $request->all(),
-                ['total_dues_without_decrease' => $totalDuesWithoutDecrease,
-                    'after_discount' => $after_discount,
+                ['total_dues_without_decrease' => $totalDuesWithoutDecrease - $priceOfDelay,
+                    'after_discount' => $after_discount - $priceOfDelay,
                 ]
             ));
             foreach ($request->subjects as $subject) {

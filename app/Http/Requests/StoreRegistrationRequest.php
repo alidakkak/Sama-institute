@@ -39,6 +39,7 @@ class StoreRegistrationRequest extends FormRequest
             'subjects' => 'required|array',
             'subjects.*.subject_id' => 'required|exists:subjects,id',
             'financialDues' => 'required|numeric|min:0',
+            'amountOfDelay' => 'required|numeric|min:0',
         ];
     }
 

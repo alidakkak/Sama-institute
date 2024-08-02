@@ -169,13 +169,12 @@ class StudentController extends Controller
         );
     }
 
-
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'phone_number' => 'required',
             'password' => 'required|string|min:6',
-//            'device_token' => 'required|string',
+            //            'device_token' => 'required|string',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
