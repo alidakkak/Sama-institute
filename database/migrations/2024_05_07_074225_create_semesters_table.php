@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('unit');
             $table->date('actual_start_date')->nullable();
             $table->date('actual_completion_date')->nullable();
+            $table->boolean('status')->default(\App\Status\Semester::waiting);
             $table->timestamps();
         });
     }

@@ -60,6 +60,9 @@ class StudentPaymentController extends Controller
                     'financialDues' => $financialDues - $request->price,
                 ]);
             }
+            $registration->update([
+                'status' => \App\Status\Student::Active,
+            ]);
 
             return response()->json([
                 'message' => 'Created Successfully',

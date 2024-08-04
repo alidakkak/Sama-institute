@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateSemesterRequest;
 use App\Http\Resources\SemesterResource;
 use App\Http\Resources\StudentSubjectResource;
 use App\Models\Semester;
+use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Support\Facades\DB;
 
@@ -64,6 +65,24 @@ class SemesterController extends Controller
                 return response()->json(['message' => 'Not Found'], 404);
             }
             $semester->update($request->all());
+
+            if (! is_null($request->actual_start_date) && is_null($request->actual_completion_date)) {
+                $status = \App\Status\Semester::continuation;
+            } elseif (! is_null($request->actual_start_date) && ! is_null($request->actual_completion_date)) {
+                $status = \App\Status\Semester::end;
+            }
+            // الاستعلام للحصول على الطلاب الذين لم يدفعوا أي دفعة في الدورة
+            $absentStudents = Student::whereHas('registrations', function ($query) use ($semesterId) {
+                $query->where('semester_id', $semesterId);
+            })->whereDoesntHave('studentPayment', function ($query) use ($semesterId) {
+                $query->where('semester_id', $semesterId);
+            })->get();
+            if ($status == \App\Status\Semester::continuation) {
+                foreach ($absentStudents as $student) {
+                    $student->registrations()->where('semester_id', $semesterId)->update(['status' => \App\Status\Student::Absent]);
+                }
+            }
+            $semester->update(['status' => $status]);
 
             if ($request->has('subjects')) {
                 $subjectsData = $request->input('subjects');

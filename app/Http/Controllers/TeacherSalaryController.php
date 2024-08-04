@@ -9,9 +9,10 @@ use App\Models\TeacherSalary;
 
 class TeacherSalaryController extends Controller
 {
-    public function index()
+    /// Get TeacherSalary By TeacherID
+    public function index($teacherID)
     {
-        $teacherSalary = TeacherSalary::all();
+        $teacherSalary = TeacherSalary::where('teacher_id', $teacherID)->get();
 
         return TeacherSalaryResource::collection($teacherSalary);
     }

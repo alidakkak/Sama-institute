@@ -11,7 +11,7 @@ class StoreGeneralExpenseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreGeneralExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string',
+            'price' => 'required|numeric',
         ];
     }
 }

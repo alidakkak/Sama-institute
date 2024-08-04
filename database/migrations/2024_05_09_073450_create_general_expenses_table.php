@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('general_expenses', function (Blueprint $table) {
             $table->id();
+            $table->text('title');
+            $table->double('price');
             $table->timestamps();
         });
     }

@@ -11,6 +11,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ScholarshipController;
 use App\Http\Controllers\SemesterController;
+use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentPaymentController;
 use App\Http\Controllers\SubjectController;
@@ -108,16 +109,16 @@ Route::get('teachers/{teacherId}', [TeacherController::class, 'show']);
 Route::delete('teachers/{teacherId}', [TeacherController::class, 'delete']);
 
 //// Teacher Salary
-Route::get('teacherSalary', [TeacherSalaryController::class, 'index']);
+Route::get('teacherSalary/{teacherID}', [TeacherSalaryController::class, 'index']);
 Route::post('teacherSalary', [TeacherSalaryController::class, 'store']);
 Route::patch('teacherSalary/{Id}', [TeacherSalaryController::class, 'update']);
 
 //// Name Expenses
-Route::get('nameExpenses', [NameExpenseController::class, 'index']);
-Route::post('nameExpenses', [NameExpenseController::class, 'store']);
-Route::patch('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'update']);
-Route::get('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'show']);
-Route::delete('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'delete']);
+//Route::get('nameExpenses', [NameExpenseController::class, 'index']);
+//Route::post('nameExpenses', [NameExpenseController::class, 'store']);
+//Route::patch('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'update']);
+//Route::get('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'show']);
+//Route::delete('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'delete']);
 
 //// General Expense
 Route::get('generalExpenses', [GeneralExpenseController::class, 'index']);
@@ -125,5 +126,8 @@ Route::post('generalExpenses', [GeneralExpenseController::class, 'store']);
 Route::patch('generalExpenses/{generalExpenseId}', [GeneralExpenseController::class, 'update']);
 Route::get('generalExpenses/{generalExpenseId}', [GeneralExpenseController::class, 'show']);
 Route::delete('generalExpenses/{generalExpenseId}', [GeneralExpenseController::class, 'delete']);
+
+/// Statistic
+Route::get('getStatisticGeneral', [StatisticController::class, 'getStatisticGeneral']);
 
 //});
