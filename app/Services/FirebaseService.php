@@ -15,20 +15,21 @@ class FirebaseService
     {
 
         $firebase = (new Factory)
-            ->withServiceAccount(env('FIREBASE_CREDENTIALS'));
+            ->withServiceAccount(config('services.firebase.credentials'));
 
         $this->messaging = $firebase->createMessaging();
     }
 
-    public function BasicSendNotification($title, $body, $FcmToken, $data)
+    public static function  BasicSendNotification($title, $body, $FcmToken, $data)
     {
+        $instance = app(self::class);
         $notification = Notification::create($title, $body);
         foreach ($FcmToken as $token) {
             $message = CloudMessage::withTarget('token', $token)
                 ->withNotification($notification)
                 ->withData($data);
             try {
-                $this->messaging->send($message);
+                $instance->messaging->send($message);
             } catch (\Exception $e) {
                 Log::error('Failed to send notification: '.$e->getMessage());
             }
