@@ -39,7 +39,7 @@ class NoteController extends Controller
             $title = 'New Note Added';
             $body = 'A new note has been added for the student.';
             /// Device Key
-            $FcmToken = DeviceToken::where('student_id', $note->student_id)->pluck('token')->toArray();
+            $FcmToken = DeviceToken::where('student_id', $note->student_id)->pluck('device_token')->toArray();
 
             $data = ['note_id' => $note->id];
 
