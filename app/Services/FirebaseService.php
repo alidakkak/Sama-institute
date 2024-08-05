@@ -20,7 +20,7 @@ class FirebaseService
         $this->messaging = $firebase->createMessaging();
     }
 
-    public static function  BasicSendNotification($title, $body, $FcmToken, $data)
+    public static function BasicSendNotification($title, $body, $FcmToken, $data)
     {
         $instance = app(self::class);
         $notification = Notification::create($title, $body);
