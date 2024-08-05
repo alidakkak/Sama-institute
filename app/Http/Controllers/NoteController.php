@@ -9,6 +9,7 @@ use App\Models\DeviceToken;
 use App\Models\Note;
 use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class NoteController extends Controller
 {
@@ -33,6 +34,7 @@ class NoteController extends Controller
 
     public function store(StoreNoteRequest $request)
     {
+        DB::beginTransaction();
         try {
             $note = Note::create($request->all());
 
@@ -44,12 +46,13 @@ class NoteController extends Controller
             $data = ['note_id' => $note->id];
 
             FirebaseService::BasicSendNotification($title, $body, $FcmToken, $data);
-
+            DB::commit();
             return response()->json([
                 'message' => 'Created SuccessFully',
                 'data' => NoteResource::make($note),
             ]);
         } catch (\Exception $e) {
+                DB::rollBack();
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),
