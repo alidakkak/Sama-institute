@@ -10,6 +10,7 @@ use App\Models\Note;
 use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class NoteController extends Controller
 {
@@ -44,8 +45,8 @@ class NoteController extends Controller
             $FcmToken = DeviceToken::where('student_id', $note->student_id)->pluck('device_token')->toArray();
 
             $data = ['note_id' => $note->id];
-
-            FirebaseService::BasicSendNotification($title, $body, $FcmToken, $data);
+            $firebaseNotification = new FirebaseService();
+            $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
             DB::commit();
             return response()->json([
                 'message' => 'Created SuccessFully',
