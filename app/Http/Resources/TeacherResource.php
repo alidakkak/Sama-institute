@@ -28,7 +28,8 @@ class TeacherResource extends JsonResource
             'date_of_birth' => $this->date_of_birth,
             'status' => $this->status,
             'teacherPayment' => TeacherSalaryResource::collection($this->teacherSalary),
-            'created_at' => $this->created_at->format('y-m-d')
+            'created_at' => $this->created_at->format('y-m-d'),
+            'subject' => $this->subjects
         ];
     }
 }

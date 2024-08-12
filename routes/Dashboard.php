@@ -37,6 +37,7 @@ Route::post('classrooms', [ClassroomController::class, 'store']);
 Route::patch('classrooms/{classroomId}', [ClassroomController::class, 'update']);
 Route::delete('classrooms/{classroomId}', [ClassroomController::class, 'delete']);
 Route::post('addTeacher', [ClassroomController::class, 'addTeacher']);
+Route::patch('updateTeacher', [ClassroomController::class, 'updateTeacher']);
 
 //// Student
 Route::get('students', [StudentController::class, 'index']);
