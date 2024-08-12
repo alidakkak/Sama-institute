@@ -35,7 +35,8 @@ class ClassroomResource extends JsonResource
                     return [
                         'id' => $registration->student->id,
                         'fullName' => $registration->student->first_name.' '.$registration->student->last_name,
-                        'created_at' => $registration->created_at->format('y-m-d')
+                        'created_at' => $registration->created_at->format('y-m-d'),
+                        'subjectCount' => $registration->studentSubject
                     ];
                 }),
             ];
