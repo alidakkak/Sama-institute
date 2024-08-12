@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('location');
             $table->string('gender');
             $table->date('date_of_birth');
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

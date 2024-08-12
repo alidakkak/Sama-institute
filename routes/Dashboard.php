@@ -103,7 +103,7 @@ Route::post('specialDiscount', [ScholarshipController::class, 'specialDiscount']
 Route::get('teachers', [TeacherController::class, 'index']);
 Route::get('teacherActive', [TeacherController::class, 'teacherActive']);
 Route::post('teachers', [TeacherController::class, 'store']);
-Route::post('makeInactive/{id}', [TeacherController::class, 'makeInactive']);
+Route::patch('switchStatus/{id}', [TeacherController::class, 'switchStatus']);
 Route::patch('teachers/{teacherId}', [TeacherController::class, 'update']);
 Route::get('teachers/{teacherId}', [TeacherController::class, 'show']);
 Route::delete('teachers/{teacherId}', [TeacherController::class, 'delete']);

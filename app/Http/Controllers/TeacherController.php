@@ -26,7 +26,7 @@ class TeacherController extends Controller
     }
 
     /// Make Teacher Inactive
-    public function makeInactive($id)
+    public function switchStatus($id)
     {
         $teacher = Teacher::find($id);
 
@@ -34,9 +34,9 @@ class TeacherController extends Controller
             return response()->json(['message' => 'Teacher not found'], 404);
         }
 
-        $teacher->update(['status' => 'inactive']);
+        $teacher->update(['status' => ! boolval($teacher->status)]);
 
-        return response()->json(['message' => 'Teacher status updated to inactive'], 200);
+        return response()->json(['message' => 'Updated SuccessFully'], 200);
     }
 
     public function store(StoreTeacherRequest $request)
