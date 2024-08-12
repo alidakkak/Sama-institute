@@ -31,8 +31,6 @@ class MarkController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->validated();
-            $marks = [];
-            $fcmTokens = [];
             $notificationsData = [];
 
             foreach ($data['student_id'] as $index => $student_id) {
@@ -46,7 +44,6 @@ class MarkController extends Controller
                 ]);
 
                 $tokens = DeviceToken::where('student_id', $mark->student_id)->pluck('device_token')->toArray();
-                $fcmTokens = array_merge($fcmTokens, $tokens);
 
                 $notificationsData[] = [
                     'title' => 'تم إضافة علامة جديدة',
