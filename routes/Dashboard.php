@@ -6,7 +6,6 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExtraChargeController;
 use App\Http\Controllers\GeneralExpenseController;
 use App\Http\Controllers\MarkController;
-use App\Http\Controllers\NameExpenseController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ScholarshipController;
@@ -113,13 +112,6 @@ Route::delete('teachers/{teacherId}', [TeacherController::class, 'delete']);
 Route::get('teacherSalary/{teacherID}', [TeacherSalaryController::class, 'index']);
 Route::post('teacherSalary', [TeacherSalaryController::class, 'store']);
 Route::patch('teacherSalary/{Id}', [TeacherSalaryController::class, 'update']);
-
-//// Name Expenses
-//Route::get('nameExpenses', [NameExpenseController::class, 'index']);
-//Route::post('nameExpenses', [NameExpenseController::class, 'store']);
-//Route::patch('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'update']);
-//Route::get('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'show']);
-//Route::delete('nameExpenses/{nameExpenseId}', [NameExpenseController::class, 'delete']);
 
 //// General Expense
 Route::get('generalExpenses', [GeneralExpenseController::class, 'index']);

@@ -11,7 +11,7 @@ class DeviceToken extends Model
 
     protected $guarded = ['id'];
 
-//    protected $table = 'device_tokens';
+    //    protected $table = 'device_tokens';
 
     public function student()
     {

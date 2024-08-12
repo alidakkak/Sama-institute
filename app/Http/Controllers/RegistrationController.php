@@ -69,6 +69,22 @@ class RegistrationController extends Controller
                     'rounded_price' => $rounded_price,
                 ];
             }
+        } elseif ($total_sessions == 1) {
+            $decrease_step = $price_difference / ($total_sessions);
+            for ($i = 0; $i < $total_sessions; $i++) {
+                $session_price = $decrease_step;
+
+                $cumulative_price += $session_price;
+
+                $rounded_price = round($cumulative_price / $rounding_threshold) * $rounding_threshold;
+
+                $prices[] = [
+                    'session_number' => $i + 1,
+                    'session_price' => round($session_price),
+                    'cumulative_price' => round($cumulative_price),
+                    'rounded_price' => $rounded_price,
+                ];
+            }
         } else {
             $decrease_step = $price_difference / ($total_sessions - 1);
             for ($i = 0; $i < $total_sessions; $i++) {

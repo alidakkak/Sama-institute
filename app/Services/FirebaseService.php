@@ -16,7 +16,7 @@ class FirebaseService
 
         $firebase = (new Factory)
 //            ->withServiceAccount(config('services.firebase.credentials'));
-        ->withServiceAccount(config_path('firebase_credentials.json'));
+            ->withServiceAccount(config_path('firebase_credentials.json'));
 
         $this->messaging = $firebase->createMessaging();
     }
