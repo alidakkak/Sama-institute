@@ -29,7 +29,7 @@ class TeacherResource extends JsonResource
             'status' => $this->status,
             'teacherPayment' => TeacherSalaryResource::collection($this->teacherSalary),
             'created_at' => $this->created_at->format('y-m-d'),
-            'subject' => $this->subjects
+//            'subject' => $this->subjects
         ];
     }
 }
