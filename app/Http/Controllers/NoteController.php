@@ -38,12 +38,12 @@ class NoteController extends Controller
         try {
             $note = Note::create($request->all());
 
-            $title = 'New Note Added';
-            $body = 'A new note has been added for the student.';
+            $title = 'تم إضافة ملاحظة جديدة';
+            $body = $note->title;
             /// Device Key
             $FcmToken = DeviceToken::where('student_id', $note->student_id)->pluck('device_token')->toArray();
 
-            $data = ['note_id' => $note->id];
+            $data = ['title' => $note->title];
             $firebaseNotification = new FirebaseService;
             $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
             DB::commit();

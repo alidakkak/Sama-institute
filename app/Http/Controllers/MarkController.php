@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMarkRequest;
 use App\Http\Requests\UpdateMarkRequest;
 use App\Http\Resources\MarkResource;
+use App\Models\DeviceToken;
 use App\Models\Mark;
 use App\Models\Semester;
+use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MarkController extends Controller
 {
@@ -25,9 +28,13 @@ class MarkController extends Controller
 
     public function store(StoreMarkRequest $request)
     {
+        DB::beginTransaction();
         try {
             $data = $request->validated();
             $marks = [];
+            $fcmTokens = [];
+            $notificationsData = [];
+
             foreach ($data['student_id'] as $index => $student_id) {
                 $mark = Mark::create([
                     'student_id' => $student_id,
@@ -37,20 +44,44 @@ class MarkController extends Controller
                     'exam_id' => $data['exam_id'],
                     'result' => $data['result'][$index],
                 ]);
-                $marks[] = $mark;
+
+                $tokens = DeviceToken::where('student_id', $mark->student_id)->pluck('device_token')->toArray();
+                $fcmTokens = array_merge($fcmTokens, $tokens);
+
+                $notificationsData[] = [
+                    'title' => 'تم إضافة علامة جديدة',
+                    'body' => 'علامة مادة: ' . $mark->subject->name . ' تم إضافتها.',
+                    'data' => [
+                        'result' => $mark->result,
+                        'date' => $mark->date,
+                    ],
+                    'tokens' => $tokens,
+                ];
+            }
+            DB::commit();
+
+            $firebaseNotification = new FirebaseService;
+            foreach ($notificationsData as $notification) {
+                $firebaseNotification->BasicSendNotification(
+                    $notification['title'],
+                    $notification['body'],
+                    $notification['tokens'],
+                    $notification['data']
+                );
             }
 
             return response()->json([
-                'message' => 'Created SuccessFully',
-                'data' => MarkResource::collection(collect($marks)),
+                'message' => 'تم الإنشاء بنجاح',
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
-                'message' => 'An error occurred',
+                'message' => 'حدث خطأ',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
     public function update(UpdateMarkRequest $request, $markId)
     {
