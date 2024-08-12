@@ -47,7 +47,7 @@ class MarkController extends Controller
 
                 $notificationsData[] = [
                     'title' => 'تم إضافة علامة جديدة',
-                    'body' => 'علامة مادة: ' . $mark->subject->name . ' تم إضافتها.',
+                    'body' => 'علامة مادة: '.$mark->subject->name.' تم إضافتها.',
                     'data' => [
                         'result' => $mark->result,
                         'date' => $mark->date,
@@ -72,13 +72,13 @@ class MarkController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'message' => 'حدث خطأ',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
-
 
     public function update(UpdateMarkRequest $request, $markId)
     {

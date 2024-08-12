@@ -69,12 +69,12 @@ class StudentPaymentController extends Controller
             $title = 'تم إضافة دفعة جديدة';
             $body = $request->title;
             /// Device Key
-            $FcmToken = DeviceToken::where('student_id', $student->student_id)->pluck('device_token')->toArray();
+            $FcmToken = DeviceToken::where('student_id', $student->id)->pluck('device_token')->toArray();
 
             $data = [
                 'title' => $request->title,
                 'price' => $request->price,
-                ];
+            ];
             $firebaseNotification = new FirebaseService;
             $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
 
