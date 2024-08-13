@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\ImportLog;
 use App\Models\InOutLog;
 use App\Models\Student;
-use Laradevsbd\Zkteco\Http\Library\ZktecoLib;
 use Jmrashed\Zkteco\Lib\ZKTeco;
 
 class AttendanceController extends Controller
 {
     public function fetchAttendance()
     {
-        $zk = new ZktecoLib(config('zkteco.ip'));
+        $zk = new ZKTeco('192.168.1.201');
 
         if ($zk->connect()) {
             $attendances = $zk->getAttendance();
