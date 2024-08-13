@@ -6,6 +6,7 @@ use App\Models\ImportLog;
 use App\Models\InOutLog;
 use App\Models\Student;
 use Jmrashed\Zkteco\Lib\ZKTeco;
+use Ramsey\Uuid\Type\Integer;
 
 class AttendanceController extends Controller
 {
@@ -58,6 +59,8 @@ class AttendanceController extends Controller
     {
         $zk = new ZKTeco('192.168.1.201');
         if ($zk->connect()) {
+//         return $zk->getUser();
+            return $zk->getAttendance();
             return response('OK', 200);
         }else
             return response('Connection error', 500);
