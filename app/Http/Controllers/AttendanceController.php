@@ -47,7 +47,11 @@ class AttendanceController extends Controller
             ImportLog::create(['last_import_time' => now()]);
 
             $zk->disconnect();
+        } else {
+            return response()->json(['error' => 'Failed to connect to the device'], 500);
         }
+
+        return response()->json(['success' => 'Attendance fetched successfully'], 200);
     }
 
     public function test()
