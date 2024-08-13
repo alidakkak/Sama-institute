@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeviceToken;
 use App\Models\ImportLog;
 use App\Models\InOutLog;
 use App\Models\Student;
+use App\Services\FirebaseService;
 use Jmrashed\Zkteco\Lib\ZKTeco;
 use Ramsey\Uuid\Type\Integer;
 
@@ -42,18 +44,31 @@ class AttendanceController extends Controller
                         }
 
                         $log->save();
+
+                        // إرسال إشعار للطالب عند تسجيل الدخول أو الخروج
+                        $title = 'تم تسجيل حضورك';
+                        $body = 'تم تسجيل حضورك في الوقت ' . $attendanceTime;
+                        $FcmToken = DeviceToken::where('student_id', $student->id)->pluck('device_token')->toArray();
+
+                        $data = ['title' => $title, 'body' => $body];
+                        $firebaseNotification = new FirebaseService;
+                        $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
                     }
                 }
             }
+
+            // تحديث وقت الاستيراد الأخير
             ImportLog::create(['last_import_time' => now()]);
 
+            // قطع الاتصال بجهاز البصمة
             $zk->disconnect();
+
+            return response()->json(['success' => 'Attendance fetched and notifications sent successfully'], 200);
         } else {
             return response()->json(['error' => 'Failed to connect to the device'], 500);
         }
-
-        return response()->json(['success' => 'Attendance fetched successfully'], 200);
     }
+
 
     public function test()
     {

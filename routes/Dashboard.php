@@ -125,7 +125,9 @@ Route::delete('generalExpenses/{generalExpenseId}', [GeneralExpenseController::c
 Route::get('getStatisticGeneral', [StatisticController::class, 'getStatisticGeneral']);
 
 /// Attendance
-//Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
-Route::get('attendances', [AttendanceController::class, 'test']);
+Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
+//Route::get('attendances', [AttendanceController::class, 'test']);
 
 //});
+
+Route::get('attendances', [NoteController::class, 'get']);

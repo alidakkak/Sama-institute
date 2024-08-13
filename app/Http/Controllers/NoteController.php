@@ -113,4 +113,9 @@ class NoteController extends Controller
             ], 500);
         }
     }
+
+    public function get()
+    {
+        return DeviceToken::all();
+    }
 }
