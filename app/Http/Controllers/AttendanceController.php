@@ -72,13 +72,22 @@ class AttendanceController extends Controller
 
     public function test()
     {
-        $zk = new ZKTeco('192.168.1.201');
-        if ($zk->connect()) {
-//         return $zk->getUser();
-            return $zk->getAttendance();
-            return response('OK', 200);
-        }else
-            return response('Connection error', 500);
+        $student = Student::find(6); // على سبيل المثال، استخدام ID معين للطالب
+
+        // إذا كان الطالب موجودًا
+        if ($student) {
+            $title = 'تم تسجيل حضورك';
+            $attendanceTime = now()->format('Y-m-d H:i:s'); // يمكنك تخصيص الوقت كما تشاء
+            $body = 'تم تسجيل حضورك في الوقت ' . $attendanceTime;
+            $FcmToken = DeviceToken::where('student_id', $student->id)->pluck('device_token')->toArray();
+
+            $data = ['title' => $title, 'body' => $body];
+            $firebaseNotification = new FirebaseService;
+            $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
+        } else {
+            return response()->json(['error' => 'Student not found'], 404);
+        }
     }
+
 
 }
