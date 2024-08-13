@@ -42,6 +42,7 @@ return new class extends Migration
             $table->string('note')->nullable();
             $table->string('image')->nullable();
             $table->string('password');
+            $table->unsignedInteger('device_user_id')->nullable();
             $table->timestamps();
         });
     }

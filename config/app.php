@@ -170,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
+        Laradevsbd\Zkteco\ZktecoServiceProvider::class,
 
     ])->toArray(),
 

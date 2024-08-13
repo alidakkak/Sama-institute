@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ExamController;
@@ -122,5 +123,9 @@ Route::delete('generalExpenses/{generalExpenseId}', [GeneralExpenseController::c
 
 /// Statistic
 Route::get('getStatisticGeneral', [StatisticController::class, 'getStatisticGeneral']);
+
+/// Attendance
+Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
+Route::get('attendances', [AttendanceController::class, 'test']);
 
 //});

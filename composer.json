@@ -8,6 +8,7 @@
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",
         "itsgoingd/clockwork": "^5.2",
+        "jmrashed/zkteco": "^1.0",
         "kreait/firebase-php": "^5.26",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
