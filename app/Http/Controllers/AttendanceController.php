@@ -1,14 +1,14 @@
 <?php
-//
-//namespace App\Http\Controllers;
-//
-//use App\Models\ImportLog;
-//use App\Models\InOutLog;
-//use App\Models\Student;
-//use Jmrashed\Zkteco\Lib\ZKTeco;
-//
-//class AttendanceController extends Controller
-//{
+
+namespace App\Http\Controllers;
+
+use App\Models\ImportLog;
+use App\Models\InOutLog;
+use App\Models\Student;
+use Jmrashed\Zkteco\Lib\ZKTeco;
+
+class AttendanceController extends Controller
+{
 //    public function fetchAttendance()
 //    {
 //        $zk = new ZKTeco('192.168.1.201');
@@ -49,14 +49,14 @@
 //            $zk->disconnect();
 //        }
 //    }
-//
-//    public function test()
-//    {
-//        $zk = new ZKTeco('192.168.1.201');
-//        if ($zk->connect()) {
-//            return response('OK', 200);
-//        }else
-//            return response('Connection error', 500);
-//    }
-//
-//}
+
+    public function test()
+    {
+        $zk = new ZKTeco('192.168.1.201');
+        if ($zk->connect()) {
+            return response('OK', 200);
+        }else
+            return response('Connection error', 500);
+    }
+
+}
