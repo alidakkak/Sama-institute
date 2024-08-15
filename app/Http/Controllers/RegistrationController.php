@@ -127,6 +127,7 @@ class RegistrationController extends Controller
                 $request->all(),
                 ['total_dues_without_decrease' => $totalDuesWithoutDecrease - $priceOfDelay,
                     'after_discount' => $after_discount - $priceOfDelay,
+                    'financialDues' => $request->financialDues - $priceOfDelay,
                 ]
             ));
             foreach ($request->subjects as $subject) {

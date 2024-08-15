@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth:api_student'], function () {
 
     /// Subject
     Route::get('getSubjects/{semesterID}', [SubjectController::class, 'getSubject']);
+    Route::get('GPASubject/{subjectID}', [SubjectController::class, 'GPASubject']);
 
     /// Student Payment
     Route::get('getStudentPayment/{semesterID}', [StudentPaymentController::class, 'getStudentPayment']);

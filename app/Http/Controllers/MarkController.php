@@ -49,6 +49,7 @@ class MarkController extends Controller
                     'title' => 'تم إضافة علامة جديدة',
                     'body' => 'علامة مادة: '.$mark->subject->name.' تم إضافتها.',
                     'data' => [
+                        'type' => 'mark',
                         'result' => $mark->result,
                         'date' => $mark->date,
                     ],

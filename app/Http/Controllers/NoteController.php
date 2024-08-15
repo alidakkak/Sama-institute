@@ -43,7 +43,7 @@ class NoteController extends Controller
             /// Device Key
             $FcmToken = DeviceToken::where('student_id', $note->student_id)->pluck('device_token')->toArray();
 
-            $data = ['title' => $note->title];
+            $data = ['type' => 'note', 'title' => $note->title];
             $firebaseNotification = new FirebaseService;
             $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
             DB::commit();

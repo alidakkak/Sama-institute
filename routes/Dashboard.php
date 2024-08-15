@@ -74,9 +74,6 @@ Route::delete('extraCharges/{extraChargeId}', [ExtraChargeController::class, 'de
 
 //// Subject
 Route::get('subjects', [SubjectController::class, 'index']);
-Route::post('subjects', [SubjectController::class, 'store']);
-Route::patch('subjects/{subjectId}', [SubjectController::class, 'update']);
-Route::get('subjects/{subjectId}', [SubjectController::class, 'show']);
 Route::delete('subjects/{subjectId}', [SubjectController::class, 'delete']);
 
 //// Exam
