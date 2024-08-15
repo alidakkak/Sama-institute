@@ -52,6 +52,7 @@ class MarkController extends Controller
                         'type' => 'mark',
                         'result' => $mark->result,
                         'date' => $mark->date,
+                        'status' => $mark->result >= 60 ? 'ناجح' : 'راسب' ,
                     ],
                     'tokens' => $tokens,
                 ];
