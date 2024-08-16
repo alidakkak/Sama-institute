@@ -66,9 +66,9 @@ class SemesterController extends Controller
             }
             $semester->update($request->all());
 
-            if (! is_null($request->actual_start_date) && is_null($request->actual_completion_date)) {
+            if (! is_null($semester->actual_start_date) && is_null($semester->actual_completion_date)) {
                 $status = \App\Status\Semester::continuation;
-            } elseif (! is_null($request->actual_start_date) && ! is_null($request->actual_completion_date)) {
+            } elseif (! is_null($semester->actual_start_date) && ! is_null($semester->actual_completion_date)) {
                 $status = \App\Status\Semester::end;
             }
             // الاستعلام للحصول على الطلاب الذين لم يدفعوا أي دفعة في الدورة
