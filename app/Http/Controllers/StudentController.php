@@ -27,8 +27,8 @@ class StudentController extends Controller
                 'father_name' => $student->father_name,
                 'date_of_birth' => $student->date_of_birth,
                 'created_at' => $student->created_at->format('Y-m-d'),
-                'date_of_registration' => optional($student->registrations->first())->created_at ?
-                    $student->registrations->first()->created_at->format('Y-m-d') : null,
+//                'date_of_registration' => optional($student->registrations->first())->created_at ?
+//                    $student->registrations->first()->created_at->format('Y-m-d') : null,
             ];
         });
 

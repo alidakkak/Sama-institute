@@ -59,6 +59,7 @@ class StudentResource extends JsonResource
             'other_Healthy' => $this->other_Healthy,
             'note' => $this->note,
             'image' => url($this->image),
+            'created_at' => $this->created_at->format('Y-m-d'),
             'Registration' => RegistrationResource::collection($this->registrations),
         ];
 
