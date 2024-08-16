@@ -50,7 +50,11 @@ class MarkController extends Controller
                     'result' => $data['result'][$index],
                 ]);
 
-                $allMarks[$student_id][] = $mark;
+                if (isset($allMarks[$student_id])) {
+                    $allMarks[$student_id][] = $mark;
+                } else {
+                    $allMarks[$student_id] = [$mark];
+                }
 
                 $tokens = DeviceToken::where('student_id', $mark->student_id)->pluck('device_token')->toArray();
 
