@@ -23,6 +23,7 @@ return new class extends Migration
             $table->double('after_discount')->nullable();
             $table->boolean('isComplete')->default(false);
             $table->string('status')->default(Student::Active);
+            $table->double('GPA')->default(0);
             $table->timestamps();
         });
     }

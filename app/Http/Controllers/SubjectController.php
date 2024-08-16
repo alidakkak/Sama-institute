@@ -43,13 +43,22 @@ class SubjectController extends Controller
 
         $totalWeightedMarks = 0;
         $totalPercent = 0;
+        $marksWithExamNames = [];
 
         foreach ($resultMarks as $mark) {
-            $examPercent = Exam::where('id', $mark->exam_id)->value('percent');
+            $examPercent = $mark->exam->percent;
 
             $totalWeightedMarks += $mark->result * ($examPercent / 100);
 
             $totalPercent += $examPercent;
+
+            $marksWithExamNames[] = [
+                'result' => $mark->result,
+                'date' => $mark->date,
+                'exam_name' => $mark->exam->name,
+                'percent' => $examPercent,
+                'semester_id' => $mark->semester_id,
+            ];
         }
 
         if ($totalPercent > 0) {
@@ -58,8 +67,12 @@ class SubjectController extends Controller
             $GPA = 0;
         }
 
-        return response()->json(['GPA' => round($GPA, 2)]);
+        return response()->json([
+            'GPA' => round($GPA, 2),
+            'marks' => $marksWithExamNames
+        ]);
     }
+
 
     public function delete($subjectId)
     {

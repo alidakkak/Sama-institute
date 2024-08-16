@@ -6,7 +6,9 @@ use App\Http\Requests\StoreMarkRequest;
 use App\Http\Requests\UpdateMarkRequest;
 use App\Http\Resources\MarkResource;
 use App\Models\DeviceToken;
+use App\Models\Exam;
 use App\Models\Mark;
+use App\Models\Registration;
 use App\Models\Semester;
 use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +35,11 @@ class MarkController extends Controller
             $data = $request->validated();
             $notificationsData = [];
 
+            $allMarks = Mark::whereIn('student_id', $data['student_id'])
+                ->where('semester_id', $data['semester_id'])
+                ->get()
+                ->groupBy('student_id');
+
             foreach ($data['student_id'] as $index => $student_id) {
                 $mark = Mark::create([
                     'student_id' => $student_id,
@@ -43,6 +50,8 @@ class MarkController extends Controller
                     'result' => $data['result'][$index],
                 ]);
 
+                $allMarks[$student_id][] = $mark;
+
                 $tokens = DeviceToken::where('student_id', $mark->student_id)->pluck('device_token')->toArray();
 
                 $notificationsData[] = [
@@ -52,11 +61,33 @@ class MarkController extends Controller
                         'type' => 'mark',
                         'result' => $mark->result,
                         'date' => $mark->date,
-                        'status' => $mark->result >= 40 ? 'ناجح' : 'راسب' ,
+                        'status' => $mark->result >= 40 ? 'ناجح' : 'راسب',
                     ],
                     'tokens' => $tokens,
                 ];
             }
+
+            foreach ($allMarks as $student_id => $marks) {
+                $totalWeightedMarks = 0;
+                $totalPercent = 0;
+
+                foreach ($marks as $mark) {
+                    $examPercent = Exam::where('id', $mark->exam_id)->value('percent');
+                    $totalWeightedMarks += $mark->result * ($examPercent / 100);
+                    $totalPercent += $examPercent;
+                }
+
+                if ($totalPercent > 0) {
+                    $GPA = $totalWeightedMarks / ($totalPercent / 100);
+                } else {
+                    $GPA = 0;
+                }
+
+                Registration::where('student_id', $student_id)
+                    ->where('semester_id', $data['semester_id'])
+                    ->update(['GPA' => round($GPA, 2)]);
+            }
+
             DB::commit();
 
             $firebaseNotification = new FirebaseService;
@@ -81,6 +112,8 @@ class MarkController extends Controller
             ], 500);
         }
     }
+
+
 
     public function update(UpdateMarkRequest $request, $markId)
     {

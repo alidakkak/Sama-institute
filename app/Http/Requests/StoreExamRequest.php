@@ -40,7 +40,7 @@ class StoreExamRequest extends FormRequest
                 ->sum('percent') + $percent;
 
             if ($totalPercent > 100) {
-                $validator->errors()->add('percent', 'The total percentage for the semester exceeds 100%.');
+                $validator->errors()->add('percent', 'مجموع النسبة المئوية للفصل الدراسي يتجاوز 100%.');
             }
         });
     }
