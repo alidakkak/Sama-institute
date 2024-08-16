@@ -38,7 +38,7 @@ class RegistrationResource extends JsonResource
                 return [
                     'subjectID' => $subjectGroup->first()->subject->id,
                     'subjectName' => $subjectGroup->first()->subject->name,
-                    'average' => $weightedAverage,
+                    'average' => round($weightedAverage, 2),
                     'exams' => $examResults->values()->all(),
                 ];
             });
@@ -65,7 +65,7 @@ class RegistrationResource extends JsonResource
                 'theRemainingAmountOf' => $theRemainingAmountOf,
                 'theAmountThatWasPaid' => $this->total_dues_without_decrease - $theRemainingAmountOf,
                 'subjectResults' => $subjectResults->values()->all(),
-                'total_GPA_For_All_Subjects' => $totalGPAForAllSubjects,
+                'total_GPA_For_All_Subjects' => round($totalGPAForAllSubjects, 2),
             ];
         }
 
