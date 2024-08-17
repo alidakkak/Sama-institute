@@ -125,7 +125,6 @@ Route::get('getStatisticGeneral', [StatisticController::class, 'getStatisticGene
 /// Attendance
 Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
 Route::get('attendances', [AttendanceController::class, 'test']);
+Route::get('getAttendance/{studentID}', [AttendanceController::class, 'getAttendance']);
 
 //});
-
-//Route::get('attendances', [NoteController::class, 'get']);

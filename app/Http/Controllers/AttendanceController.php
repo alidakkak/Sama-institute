@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AttendanceResource;
 use App\Models\DeviceToken;
 use App\Models\ImportLog;
 use App\Models\InOutLog;
@@ -89,5 +90,10 @@ class AttendanceController extends Controller
         }
     }
 
+    public function getAttendance($studentID)
+    {
+        $attendance = InOutLog::where('student_id', $studentID)->get();
+        return AttendanceResource::collection($attendance);
+    }
 
 }
