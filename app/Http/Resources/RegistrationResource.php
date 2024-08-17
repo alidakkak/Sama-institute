@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -83,7 +84,7 @@ class RegistrationResource extends JsonResource
             'studentBehavior' => NoteResource::collection($this->notes->where('student_id', $this->student_id)),
             'marks' => ShowDetailsResource::collection($this->marks->where('student_id', $this->student_id)),
             'subjectResults' => $subjectResults->values()->all(),
-            'total_GPA_For_All_Subjects' => $totalGPAForAllSubjects,
+            'total_GPA_For_All_Subjects' => round($totalGPAForAllSubjects, 2),
         ];
     }
 }

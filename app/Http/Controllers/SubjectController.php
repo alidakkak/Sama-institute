@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
 use App\Models\Exam;
 use App\Models\Mark;
+use App\Models\Registration;
 use App\Models\StudentSubject;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Auth;
@@ -39,28 +40,32 @@ class SubjectController extends Controller
 
         $resultMarks = Mark::where('subject_id', $subjectID)
             ->where('student_id', $studentID)
-            ->get();
+            ->get()
+            ->groupBy('exam_id');
 
         $totalWeightedMarks = 0;
         $totalPercent = 0;
         $marksWithExamNames = [];
 
-        foreach ($resultMarks as $mark) {
-            $examPercent = $mark->exam->percent;
+        foreach ($resultMarks as $examId => $marks) {
+            $examPercent = $marks->first()->exam->percent;
+            $averageMark = $marks->avg('result');
+            $marksCount = $marks->count();
 
-            $totalWeightedMarks += $mark->result * ($examPercent / 100);
-
+            $totalWeightedMarks += $averageMark * ($examPercent / 100);
             $totalPercent += $examPercent;
 
             $marksWithExamNames[] = [
-                'result' => $mark->result,
-                'date' => $mark->date,
-                'exam_name' => $mark->exam->name,
+                'result' => round($averageMark, 2),
+                'date' => $marks->first()->date,
+                'exam_name' => $marks->first()->exam->name,
                 'percent' => $examPercent,
-                'semester_id' => $mark->semester_id,
+                'semester_id' => $marks->first()->semester_id,
+                'count' => $marksCount,
             ];
         }
 
+        // حساب GPA
         if ($totalPercent > 0) {
             $GPA = $totalWeightedMarks / ($totalPercent / 100);
         } else {
@@ -74,24 +79,52 @@ class SubjectController extends Controller
     }
 
 
-    public function delete($subjectId)
+    public function OverallGPA($semesterID)
     {
-        try {
-            $subject = Subject::find($subjectId);
-            if (! $subject) {
-                return response()->json(['message' => 'Not Found'], 404);
-            }
-            $subject->delete();
+        $studentID = auth::guard('api_student')->user()->id;
 
-            return response()->json([
-                'message' => 'Deleted SuccessFully',
-                'data' => SubjectResource::make($subject),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'An error occurred',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        // جلب المعدل التراكمي (GPA) من جدول registrations مباشرة
+        $GPA = Registration::where('student_id', $studentID)
+            ->where('semester_id', $semesterID)
+            ->sum('GPA');
+
+        // جلب نتائج المواد
+        $subjectResults = Mark::where('student_id', $studentID)
+            ->where('semester_id', $semesterID)
+            ->get()
+            ->groupBy('subject_id')
+            ->map(function ($subjectGroup) {
+                $totalWeight = $subjectGroup->sum(function ($mark) {
+                    return $mark->exam->percent;
+                });
+
+                $weightedSum = $subjectGroup->reduce(function ($carry, $mark) {
+                    return $carry + $mark->result * ($mark->exam->percent / 100);
+                }, 0);
+
+                $weightedAverage = ($totalWeight > 0) ? ($weightedSum / $totalWeight) * 100 : 0;
+
+                return [
+                    'subjectID' => $subjectGroup->first()->subject->id,
+                    'subjectName' => $subjectGroup->first()->subject->name,
+                    'average' => round($weightedAverage, 2),
+                ];
+            });
+
+        // حساب ترتيب الطالب
+        $allGPAs = Registration::where('semester_id', $semesterID)
+            ->orderBy('GPA', 'desc')
+            ->pluck('GPA');
+
+        $rank = $allGPAs->search($GPA) + 1;
+
+        return response()->json([
+            'totalGPA' => round($GPA, 2),
+            'rank' => $rank,
+            'subjects' => $subjectResults->values()->all(),
+        ]);
     }
+
+
+
 }
