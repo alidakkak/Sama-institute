@@ -21,7 +21,7 @@ class StudentSubjectResource extends JsonResource
                     'id' => $registration->student->id,
                     'fullName' => $registration->student->first_name.' '.$registration->student->last_name,
                     'status' => $registration->status,
-                    'subjectCount' => $registration->count(),
+                    'subjectCount' => $registration->studentSubject->count(),
                 ];
             }),
         ];
