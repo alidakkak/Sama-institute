@@ -20,7 +20,7 @@ class TeacherController extends Controller
     //// Get Teachers Active
     public function teacherActive()
     {
-        $teacher = Teacher::all()->where('status', 'active');
+        $teacher = Teacher::all()->where('status', 1);
 
         return TeacherResource::collection($teacher);
     }
