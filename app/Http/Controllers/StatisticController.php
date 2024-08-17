@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GeneralExpense;
 use App\Models\Registration;
 use App\Models\Semester;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\TeacherSalary;
 
 class StatisticController extends Controller
 {
@@ -53,5 +55,12 @@ class StatisticController extends Controller
         ];
 
         return response()->json($statistics);
+    }
+
+    public function financialResults()
+    {
+        $teacher = TeacherSalary::all()->sum('price');
+        $generalExpense = GeneralExpense::all()->sum('price');
+        return $teacher;
     }
 }
