@@ -127,5 +127,6 @@ Route::get('financialResults', [StatisticController::class, 'financialResults'])
 Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
 Route::get('attendances', [AttendanceController::class, 'test']);
 Route::get('getAttendance/{studentID}', [AttendanceController::class, 'getAttendance']);
+Route::post('addAttendance', [AttendanceController::class, 'addAttendance']);
 
 //});

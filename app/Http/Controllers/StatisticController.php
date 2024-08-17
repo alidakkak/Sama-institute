@@ -61,6 +61,6 @@ class StatisticController extends Controller
     {
         $teacher = TeacherSalary::all()->sum('price');
         $generalExpense = GeneralExpense::all()->sum('price');
-        return $teacher;
+        return $generalExpense;
     }
 }
