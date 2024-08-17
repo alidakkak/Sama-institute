@@ -46,6 +46,7 @@ Route::post('students', [StudentController::class, 'store']);
 Route::post('students/{studentId}', [StudentController::class, 'update']);
 Route::get('students/{studentId}', [StudentController::class, 'show']);
 Route::delete('students/{studentId}', [StudentController::class, 'delete']);
+Route::patch('regeneratePassword/{studentId}', [StudentController::class, 'regeneratePassword']);
 
 //// Registration
 Route::post('registrations', [RegistrationController::class, 'store']);

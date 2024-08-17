@@ -60,7 +60,7 @@ class StudentController extends Controller
         DB::beginTransaction();
         try {
             $image = $request->hasFile('image') ? $request->file('image') : '/students_image/female.jpg';
-            $password = Str::random(10);
+            $password = Str::random(8);
             $student = Student::create(array_merge([
                 'password' => Hash::make($password),
                 'image' => $image,
@@ -203,4 +203,27 @@ class StudentController extends Controller
             'user' => auth('api_student')->user(),
         ]);
     }
+
+    public function regeneratePassword($studentID)
+    {
+        $student = Student::find($studentID);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found'
+            ], 404);
+        }
+
+        $newPassword = Str::random(8);
+
+        $student->password = bcrypt($newPassword);
+
+        $student->save();
+
+        return response()->json([
+            'newPassword' => $newPassword,
+            'phone_number' => $student->phone_number
+        ]);
+    }
+
 }
