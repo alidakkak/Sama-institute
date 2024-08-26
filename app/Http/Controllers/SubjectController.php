@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SubjectController extends Controller
 {
+
     public function index()
     {
         $subject = Subject::all();

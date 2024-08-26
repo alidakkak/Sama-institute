@@ -50,6 +50,7 @@ Route::patch('regeneratePassword/{studentId}', [StudentController::class, 'regen
 
 //// Registration
 Route::post('registrations', [RegistrationController::class, 'store']);
+Route::post('quickRegistration', [RegistrationController::class, 'quickRegistration']);
 Route::patch('registrations/{id}', [RegistrationController::class, 'update']);
 Route::post('calculateCoursePrice', [RegistrationController::class, 'calculateCoursePrice']);
 Route::post('withdrawalFromTheCourse', [RegistrationController::class, 'withdrawalFromTheCourse']);

@@ -12,6 +12,8 @@ use App\Models\Student;
 use App\Models\StudentSubject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class RegistrationController extends Controller
 {
@@ -141,6 +143,56 @@ class RegistrationController extends Controller
 
             return response()->json([
                 'message' => 'Successfully Registered',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'An error occurred',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function quickRegistration(StoreRegistrationRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+            $image = $request->hasFile('image') ? $request->file('image') : '/students_image/female.jpg';
+            $password = Str::random(6);
+            $student = Student::create(array_merge(
+                $request->only('first_name', 'last_name', 'father_name', 'phone_number'),
+                [
+                    'password' => Hash::make($password),
+                    'image' => $image,
+                ]
+            ));
+            $discount = Scholarship::where('id', $request->scholarship_id)->value('discount');
+            $numberOfWeeksOfTheCycle = Semester::where('id', $request->semester_id)->value('period');
+            $after_discount = $request->financialDues - $discount;
+            $totalDuesWithoutDecrease = $request->scholarship_id ? $after_discount : $request->financialDues;
+            $amountOfDelay = $request->financialDues / $numberOfWeeksOfTheCycle;
+            $priceOfDelay = $amountOfDelay * $request->amountOfDelay;
+            $registration = Registration::create(array_merge(
+                $request->all(),
+                ['total_dues_without_decrease' => $totalDuesWithoutDecrease - $priceOfDelay,
+                    'after_discount' => $after_discount - $priceOfDelay,
+                    'financialDues' => $request->financialDues - $priceOfDelay,
+                    'student_id' => $student->id
+                ]
+            ));
+            foreach ($request->subjects as $subject) {
+                StudentSubject::create([
+                    'registration_id' => $registration->id,
+                    'subject_id' => $subject['subject_id'],
+                    'student_id' => $student->id,
+                ]);
+            }
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Successfully Registered',
+                'password' => $password
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

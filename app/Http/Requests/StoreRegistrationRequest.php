@@ -31,6 +31,22 @@ class StoreRegistrationRequest extends FormRequest
             ];
         }
 
+        if (request()->route()->uri() === 'api/quickRegistration') {
+            return [
+                'semester_id' => 'required|exists:semesters,id',
+                'classroom_id' => 'required|exists:classrooms,id',
+                'scholarship_id' => 'nullable|exists:scholarships,id',
+                'subjects' => 'required|array',
+                'subjects.*.subject_id' => 'required|exists:subjects,id',
+                'financialDues' => 'required|numeric|min:0',
+                'amountOfDelay' => 'required|numeric|min:0',
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'father_name' => 'required|string',
+                'phone_number' => 'required|string',
+            ];
+        }
+
         return [
             'student_id' => 'required|exists:students,id',
             'semester_id' => 'required|exists:semesters,id',

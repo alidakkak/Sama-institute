@@ -60,7 +60,7 @@ class StudentController extends Controller
         DB::beginTransaction();
         try {
             $image = $request->hasFile('image') ? $request->file('image') : '/students_image/female.jpg';
-            $password = Str::random(10);
+            $password = Str::random(6);
             $student = Student::create(array_merge([
                 'password' => Hash::make($password),
                 'image' => $image,
@@ -170,7 +170,7 @@ class StudentController extends Controller
         );
     }
 
-    public function login(Request $request)
+    public function   login(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'phone_number' => 'required',
@@ -214,7 +214,7 @@ class StudentController extends Controller
             ], 404);
         }
 
-        $newPassword = Str::random(10);
+        $newPassword = Str::random(6);
 
         $student->password = bcrypt($newPassword);
 
