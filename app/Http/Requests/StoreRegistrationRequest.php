@@ -42,8 +42,8 @@ class StoreRegistrationRequest extends FormRequest
                 'amountOfDelay' => 'required|numeric|min:0',
                 'first_name' => 'required|string',
                 'last_name' => 'required|string',
-                'father_name' => 'required|string',
-                'phone_number' => 'required|string',
+                'father_name' => 'nullable|string',
+                'phone_number' => 'required|string|unique:students,phone_number|max:15',
             ];
         }
 
