@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\InOutLog;
 use App\Models\Student;
 use Illuminate\Database\Seeder;
 
@@ -22,18 +21,18 @@ class DatabaseSeeder extends Seeder
             'password' => '00000000',
         ]);
 
-//        Student::create([
-//            'first_name' => 'Ali',
-//            'last_name' => 'Dakkak',
-//            'age' => '22',
-//            'date_of_birth' => '2002-3-3',
-//            'place_of_birth' => 'Damascus',
-//            'gender' => 'male',
-//            'previous_educational_status' => 'ds',
-//            'phone_number' => '0937356470',
-//            'location' => 'ad',
-//            'password' => '00000000',
-//            'image' => '/students_image/female.jpg',
-//        ]);
+        //        Student::create([
+        //            'first_name' => 'Ali',
+        //            'last_name' => 'Dakkak',
+        //            'age' => '22',
+        //            'date_of_birth' => '2002-3-3',
+        //            'place_of_birth' => 'Damascus',
+        //            'gender' => 'male',
+        //            'previous_educational_status' => 'ds',
+        //            'phone_number' => '0937356470',
+        //            'location' => 'ad',
+        //            'password' => '00000000',
+        //            'image' => '/students_image/female.jpg',
+        //        ]);
     }
 }

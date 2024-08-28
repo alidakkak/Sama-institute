@@ -16,7 +16,7 @@ class CreateZktecoDevicesTable extends Migration
         Schema::create('zkteco_devices', function (Blueprint $table) {
             $table->id();
             $table->ipAddress('ip');
-            $table->string('port',10);
+            $table->string('port', 10);
             $table->string('model_name');
             $table->tinyInteger('status')->default(0);
             $table->timestamps();

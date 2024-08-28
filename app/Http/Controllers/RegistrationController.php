@@ -178,7 +178,7 @@ class RegistrationController extends Controller
                 ['total_dues_without_decrease' => $totalDuesWithoutDecrease - $priceOfDelay,
                     'after_discount' => $after_discount - $priceOfDelay,
                     'financialDues' => $request->financialDues - $priceOfDelay,
-                    'student_id' => $student->id
+                    'student_id' => $student->id,
                 ]
             ));
             foreach ($request->subjects as $subject) {
@@ -192,7 +192,7 @@ class RegistrationController extends Controller
 
             return response()->json([
                 'message' => 'Successfully Registered',
-                'password' => $password
+                'password' => $password,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

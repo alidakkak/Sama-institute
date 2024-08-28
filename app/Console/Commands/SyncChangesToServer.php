@@ -47,12 +47,12 @@ class SyncChangesToServer extends Command
 
                 if ($response->successful()) {
                     DB::table('changes')->where('id', $change->id)->delete();
-                    $this->info('Successfully synced change ID: ' . $change->id);
+                    $this->info('Successfully synced change ID: '.$change->id);
                 } else {
-                    $this->error('Failed to sync change ID: ' . $change->id . ' - Status Code: ' . $response->status());
+                    $this->error('Failed to sync change ID: '.$change->id.' - Status Code: '.$response->status());
                 }
             } else {
-                $this->error('Failed to fetch data for change ID: ' . $change->id);
+                $this->error('Failed to fetch data for change ID: '.$change->id);
             }
         }
 

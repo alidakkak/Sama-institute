@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreSubjectRequest;
-use App\Http\Requests\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
-use App\Models\Exam;
 use App\Models\Mark;
 use App\Models\Registration;
 use App\Models\StudentSubject;
@@ -14,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class SubjectController extends Controller
 {
-
     public function index()
     {
         $subject = Subject::all();
@@ -75,10 +71,9 @@ class SubjectController extends Controller
 
         return response()->json([
             'GPA' => round($GPA, 2),
-            'marks' => $marksWithExamNames
+            'marks' => $marksWithExamNames,
         ]);
     }
-
 
     public function OverallGPA($semesterID)
     {
@@ -125,7 +120,4 @@ class SubjectController extends Controller
             'subjects' => $subjectResults->values()->all(),
         ]);
     }
-
-
-
 }

@@ -70,7 +70,6 @@ class StatisticController extends Controller
         // إجمالي المدفوعات المستلمة من الطلاب
         $totalStudentPayments = StudentPayment::all()->sum('price');
 
-
         $extraCharge = ExtraCharge::all()->sum('price');
 
         // إجمالي النفقات (الرواتب والمصروفات العامة)
@@ -88,5 +87,4 @@ class StatisticController extends Controller
             'netProfitOrLoss' => $netProfitOrLoss,
         ]);
     }
-
 }

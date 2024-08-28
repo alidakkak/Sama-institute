@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\Student;
 use App\Observers\GeneralObserver;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

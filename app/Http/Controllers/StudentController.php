@@ -27,8 +27,8 @@ class StudentController extends Controller
                 'father_name' => $student->father_name,
                 'date_of_birth' => $student->date_of_birth,
                 'created_at' => $student->created_at->format('Y-m-d'),
-//                'date_of_registration' => optional($student->registrations->first())->created_at ?
-//                    $student->registrations->first()->created_at->format('Y-m-d') : null,
+                //                'date_of_registration' => optional($student->registrations->first())->created_at ?
+                //                    $student->registrations->first()->created_at->format('Y-m-d') : null,
             ];
         });
 
@@ -170,7 +170,7 @@ class StudentController extends Controller
         );
     }
 
-    public function   login(Request $request)
+    public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'phone_number' => 'required',
@@ -208,9 +208,9 @@ class StudentController extends Controller
     {
         $student = Student::find($studentID);
 
-        if (!$student) {
+        if (! $student) {
             return response()->json([
-                'message' => 'Student not found'
+                'message' => 'Student not found',
             ], 404);
         }
 
@@ -222,8 +222,7 @@ class StudentController extends Controller
 
         return response()->json([
             'newPassword' => $newPassword,
-            'phone_number' => $student->phone_number
+            'phone_number' => $student->phone_number,
         ]);
     }
-
 }

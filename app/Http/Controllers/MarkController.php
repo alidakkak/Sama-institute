@@ -117,8 +117,6 @@ class MarkController extends Controller
         }
     }
 
-
-
     public function update(UpdateMarkRequest $request, $markId)
     {
         try {
