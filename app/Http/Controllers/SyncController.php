@@ -23,9 +23,12 @@ class SyncController extends Controller
             return response()->json(['message' => 'Table not supported'], 400);
         }
 
-        $this->processChange($table, $recordId, $changeType, $data);
-
-        return response()->json(['message' => 'Sync successful']);
+        try {
+            $this->processChange($table, $recordId, $changeType, $data);
+            return response()->json(['message' => 'Sync successful']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to process change', 'error' => $e->getMessage()], 500);
+        }
     }
 
     protected function processChange($table, $recordId, $changeType, $data)

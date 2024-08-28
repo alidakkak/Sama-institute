@@ -33,29 +33,63 @@ class SyncChangesToServer extends Command
     public function handle()
     {
         $changes = DB::table('changes')->get();
+        $successMessages = [];
+        $errorMessages = [];
 
         foreach ($changes as $change) {
             $data = DB::table($change->table_name)->where('id', $change->record_id)->first();
 
             if ($data) {
-                $response = Http::post('https://api.dev2.gomaplus.tech/api/sync', [
-                    'table_name' => $change->table_name,
-                    'record_id' => $change->record_id,
-                    'change_type' => $change->change_type,
-                    'data' => (array) $data,
-                ]);
+                $postData = $data->toArray();
+
+                if ($change->table_name == 'students' && isset($postData['image'])) {
+                    $photoPath = storage_path('app/public/students_image/' . $postData['image']);
+
+                    if (file_exists($photoPath)) {
+                        $response = Http::attach(
+                            'photo', file_get_contents($photoPath), basename($photoPath)
+                        )->post('https://api.dev2.gomaplus.tech/api/sync', [
+                            'table_name' => $change->table_name,
+                            'record_id' => $change->record_id,
+                            'change_type' => $change->change_type,
+                            'data' => $postData,
+                        ]);
+                    } else {
+                        $errorMessages[] = 'Photo file not found for change ID: ' . $change->id;
+                        continue;
+                    }
+                } else {
+                    $response = Http::post('https://api.dev2.gomaplus.tech/api/sync', [
+                        'table_name' => $change->table_name,
+                        'record_id' => $change->record_id,
+                        'change_type' => $change->change_type,
+                        'data' => $postData,
+                    ]);
+                }
 
                 if ($response->successful()) {
                     DB::table('changes')->where('id', $change->id)->delete();
-                    $this->info('Successfully synced change ID: '.$change->id);
+                    $successMessages[] = 'Successfully synced change ID: ' . $change->id;
                 } else {
-                    $this->error('Failed to sync change ID: '.$change->id.' - Status Code: '.$response->status());
+                    $errorMessages[] = 'Failed to sync change ID: ' . $change->id . ' - Status Code: ' . $response->status();
                 }
             } else {
-                $this->error('Failed to fetch data for change ID: '.$change->id);
+                $errorMessages[] = 'Failed to fetch data for change ID: ' . $change->id;
+            }
+        }
+        if (!empty($successMessages)) {
+            foreach ($successMessages as $message) {
+                $this->info($message);
+            }
+        }
+
+        if (!empty($errorMessages)) {
+            foreach ($errorMessages as $message) {
+                $this->error($message);
             }
         }
 
         $this->info('Sync process completed.');
     }
+
 }
