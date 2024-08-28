@@ -33,33 +33,29 @@ class SyncChangesToServer extends Command
     public function handle()
     {
         $changes = DB::table('changes')->get();
-        $failedChanges = [];
 
         foreach ($changes as $change) {
-            try {
+            $data = DB::table($change->table_name)->where('id', $change->record_id)->first();
+
+            if ($data) {
                 $response = Http::post('https://api.dev2.gomaplus.tech/api/sync', [
                     'table_name' => $change->table_name,
                     'record_id' => $change->record_id,
                     'change_type' => $change->change_type,
+                    'data' => $data,
                 ]);
 
                 if ($response->successful()) {
                     DB::table('changes')->where('id', $change->id)->delete();
                     $this->info('Successfully synced change ID: ' . $change->id);
                 } else {
-                    $failedChanges[] = 'Failed to sync change ID: ' . $change->id . ' - Status Code: ' . $response->status() . ' - Response: ' . $response->body();
+                    $this->error('Failed to sync change ID: ' . $change->id . ' - Status Code: ' . $response->status());
                 }
-            } catch (\Exception $e) {
-                $failedChanges[] = 'Failed to sync change ID: ' . $change->id . ' - Exception: ' . $e->getMessage();
+            } else {
+                $this->error('Failed to fetch data for change ID: ' . $change->id);
             }
         }
 
-        if (count($failedChanges) > 0) {
-            foreach ($failedChanges as $message) {
-                $this->error($message);
-            }
-        } else {
-            $this->info('All changes synced successfully.');
-        }
+        $this->info('Sync process completed.');
     }
 }

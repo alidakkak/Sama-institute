@@ -14,10 +14,10 @@ class SyncController extends Controller
         $table = $request->input('table_name');
         $recordId = $request->input('record_id');
         $changeType = $request->input('change_type');
+        $data = $request->input('data');
 
         switch ($table) {
             case 'students':
-                $data = Student::where('id', $recordId)->firstOrFail()->toArray();
                 $this->processStudentChange($recordId, $changeType, $data);
                 break;
             default:
