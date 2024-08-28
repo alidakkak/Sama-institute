@@ -15,6 +15,7 @@ use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentPaymentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SyncController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherSalaryController;
 use Illuminate\Support\Facades\Route;
@@ -129,5 +130,8 @@ Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
 Route::get('attendances', [AttendanceController::class, 'test']);
 Route::get('getAttendance/{studentID}', [AttendanceController::class, 'getAttendance']);
 Route::post('addAttendance', [AttendanceController::class, 'addAttendance']);
+
+/// Sync
+Route::post('sync', [SyncController::class, 'syncChanges']);
 
 //});

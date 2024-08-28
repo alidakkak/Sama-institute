@@ -12,9 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->call(function () {
-            app('App\Http\Controllers\AttendanceController')->fetchAttendance();
-        })->everyMinute();
+//        $schedule->call(function () {
+//            app('App\Http\Controllers\AttendanceController')->fetchAttendance();
+//        })->everyMinute();
+        $schedule->command('app:sync-changes-to-server')->everyMinute();
     }
 
     /**

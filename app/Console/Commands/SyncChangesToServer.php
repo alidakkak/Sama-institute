@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+
+class SyncChangesToServer extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:sync-changes-to-server';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Sync local database changes to the server when internet is available';
+
+    /**
+     * Execute the console command.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function handle()
+    {
+        $changes = DB::table('changes')->get();
+
+        foreach ($changes as $change) {
+            $response = Http::post('https://api.dev2.gomaplus.tech/api/sync', [
+                'table_name' => $change->table_name,
+                'record_id' => $change->record_id,
+                'change_type' => $change->change_type,
+            ]);
+            if ($response->successful()) {
+                DB::table('changes')->where('id', $change->id)->delete();
+            } else {
+                $this->error('Failed to sync change ID: ' . $change->id);
+            }
+        }
+
+        $this->info('Changes synced successfully.');
+    }
+}
