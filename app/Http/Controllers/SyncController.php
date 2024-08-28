@@ -14,7 +14,10 @@ class SyncController extends Controller
         $changeType = $request->input('change_type');
         $data = $request->input('data');
 
-        if (!in_array($table, ['students', 'semesters', 'subjects', 'classrooms', 'subject_classrooms'])) {
+        if (! in_array($table, ['students', 'semesters', 'subjects', 'registrations', 'classrooms', 'subject_classrooms',
+            'student_subjects', 'scholarships', 'device_tokens', 'exams', 'extra_charges', 'import_logs', 'in_out_logs',
+            'marks', 'notes', 'student_payments', 'teachers',
+        ])) {
             return response()->json(['message' => 'Table not supported'], 400);
         }
 
