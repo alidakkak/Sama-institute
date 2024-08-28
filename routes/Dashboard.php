@@ -133,5 +133,6 @@ Route::get('financialResults', [StatisticController::class, 'financialResults'])
 
 /// Sync
 Route::post('sync', [SyncController::class, 'syncChanges']);
+Route::get('test', [SyncController::class, 'test']);
 
 //});

@@ -42,7 +42,7 @@ class SyncChangesToServer extends Command
                     'table_name' => $change->table_name,
                     'record_id' => $change->record_id,
                     'change_type' => $change->change_type,
-                    'data' => $data,
+                    'data' => (array) $data,
                 ]);
 
                 if ($response->successful()) {
