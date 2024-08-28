@@ -18,6 +18,12 @@ class SyncController extends Controller
             case 'students':
                 $this->processStudentChange($recordId, $changeType, $data);
                 break;
+            case 'semesters':
+                $this->processSemesterChange($recordId, $changeType, $data);
+                break;
+            case 'subjects':
+                $this->processSubjectChange($recordId, $changeType, $data);
+                break;
             default:
                 return response()->json(['message' => 'Table not supported'], 400);
         }
@@ -36,6 +42,36 @@ class SyncController extends Controller
                 break;
             case 'delete':
                 DB::table('students')->where('id', $recordId)->delete();
+                break;
+        }
+    }
+
+    protected function processSemesterChange($recordId, $changeType, $data)
+    {
+        switch ($changeType) {
+            case 'create':
+                DB::table('semesters')->insert($data);
+                break;
+            case 'update':
+                DB::table('semesters')->where('id', $recordId)->update($data);
+                break;
+            case 'delete':
+                DB::table('semesters')->where('id', $recordId)->delete();
+                break;
+        }
+    }
+
+    protected function processSubjectChange($recordId, $changeType, $data)
+    {
+        switch ($changeType) {
+            case 'create':
+                DB::table('subjects')->insert($data);
+                break;
+            case 'update':
+                DB::table('subjects')->where('id', $recordId)->update($data);
+                break;
+            case 'delete':
+                DB::table('subjects')->where('id', $recordId)->delete();
                 break;
         }
     }

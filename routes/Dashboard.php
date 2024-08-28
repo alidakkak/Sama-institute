@@ -100,6 +100,12 @@ Route::get('scholarships/{scholarshipId}', [ScholarshipController::class, 'show'
 Route::delete('scholarships/{scholarshipId}', [ScholarshipController::class, 'delete']);
 Route::post('specialDiscount', [ScholarshipController::class, 'specialDiscount']);
 
+/// Attendance
+Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
+Route::get('attendances', [AttendanceController::class, 'test']);
+Route::get('getAttendance/{studentID}', [AttendanceController::class, 'getAttendance']);
+Route::post('addAttendance', [AttendanceController::class, 'addAttendance']);
+
 //// Teacher
 Route::get('teachers', [TeacherController::class, 'index']);
 Route::get('teacherActive', [TeacherController::class, 'teacherActive']);
@@ -124,12 +130,6 @@ Route::delete('generalExpenses/{generalExpenseId}', [GeneralExpenseController::c
 /// Statistic
 Route::get('getStatisticGeneral', [StatisticController::class, 'getStatisticGeneral']);
 Route::get('financialResults', [StatisticController::class, 'financialResults']);
-
-/// Attendance
-Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
-Route::get('attendances', [AttendanceController::class, 'test']);
-Route::get('getAttendance/{studentID}', [AttendanceController::class, 'getAttendance']);
-Route::post('addAttendance', [AttendanceController::class, 'addAttendance']);
 
 /// Sync
 Route::post('sync', [SyncController::class, 'syncChanges']);
