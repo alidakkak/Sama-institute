@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SyncController extends Controller
 {
@@ -20,10 +21,19 @@ class SyncController extends Controller
         ])) {
             return response()->json(['message' => 'Table not supported'], 400);
         }
+        try {
+            $this->processChange($table, $recordId, $changeType, $data);
+            return response()->json(['message' => 'Sync successful']);
+        } catch (\Exception $e) {
+            Log::error('Error syncing change: ' . $e->getMessage(), [
+                'table' => $table,
+                'record_id' => $recordId,
+                'change_type' => $changeType,
+                'data' => $data,
+            ]);
 
-        $this->processChange($table, $recordId, $changeType, $data);
-
-        return response()->json(['message' => 'Sync successful']);
+            return response()->json(['message' => 'Error processing change', 'error' => $e->getMessage()], 500);
+        }
     }
 
     protected function processChange($table, $recordId, $changeType, $data)
@@ -39,7 +49,7 @@ class SyncController extends Controller
                 DB::table($table)->where('id', $recordId)->delete();
                 break;
             default:
-                return response()->json(['message' => 'Change type not supported'], 400);
+                throw new \Exception('Change type not supported');
         }
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Resources\ScholarshipResource;
 use App\Models\Registration;
 use App\Models\Scholarship;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ScholarshipController extends Controller
 {
@@ -20,18 +21,21 @@ class ScholarshipController extends Controller
 
     public function store(StoreScholarshipRequest $request)
     {
+        DB::beginTransaction();
         try {
             $scholarship = Scholarship::create($request->all());
 
             if ($request->discount > $scholarship->semester->price) {
+                DB::rollback();
                 return response()->json(['message' => 'سعر الحسم اكبر من سعر الدورة'], 422);
             }
-
+            DB::commit();
             return response()->json([
                 'message' => 'Created SuccessFully',
                 'data' => ScholarshipResource::make($scholarship),
             ]);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),
