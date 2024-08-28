@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SyncController extends Controller
 {
@@ -44,9 +45,10 @@ class SyncController extends Controller
         }
     }
 
-    /*public function test()
+ /*   public function test()
     {
         $changes = DB::table('changes')->get();
+        $messages = [];
 
         foreach ($changes as $change) {
             $data = DB::table($change->table_name)->where('id', $change->record_id)->first();
@@ -56,20 +58,24 @@ class SyncController extends Controller
                     'table_name' => $change->table_name,
                     'record_id' => $change->record_id,
                     'change_type' => $change->change_type,
-                    'data' => $data,
+                    'data' =>  $data,
                 ]);
 
                 if ($response->successful()) {
                     DB::table('changes')->where('id', $change->id)->delete();
-                    return response()->json(['Successfully synced change ID: '.$change->id]);
+                    $messages[] = 'Successfully synced change ID: ' . $change->id;
                 } else {
-                    return $response()->json(['Failed to sync change ID: '.$change->id.' - Status Code: '.$response->status()]);
+                    $messages[] = 'Failed to sync change ID: ' . $change->id . ' - Status Code: ' . $response->status();
                 }
             } else {
-                $this->error('Failed to fetch data for change ID: '.$change->id);
+                Log::error('Failed to fetch data for change ID: ' . $change->id);
+                $messages[] = 'Failed to fetch data for change ID: ' . $change->id;
             }
         }
 
-        $this->info('Sync process completed.');
+        return response()->json([
+            'message' => 'Sync process completed.',
+            'details' => $messages,
+        ]);
     }*/
 }
