@@ -25,10 +25,6 @@ class SyncController extends Controller
         }
 
         try {
-            if ($table == 'students' && $request->hasFile('image')) {
-                $photoPath = $request->file('image')->store('students', 'public');
-                $data['image'] = $photoPath;
-            }
             $this->processChange($table, $recordId, $changeType, $data);
 
             return response()->json(['message' => 'Sync successful']);
@@ -62,7 +58,7 @@ class SyncController extends Controller
 
             $imagePath = $image->move(public_path('students_image'), $imageName);
 
-            return response()->json(['message' => 'Image uploaded successfully', 'path' => $imagePath], 200);
+            return response()->json(['message' => 'Image uploaded successfully', 'path' => $imagePath]);
         }
 
         return response()->json(['message' => 'No image uploaded'], 400);
@@ -103,7 +99,7 @@ class SyncController extends Controller
            ]);
        }*/
 
-    public function testImage()
+   /* public function testImage()
     {
         $studentsWithImages = Student::whereNotNull('image')
             ->where('is_image_synced', 0)
@@ -139,6 +135,6 @@ class SyncController extends Controller
 
         return response()->json($results, 200);
     }
-
+*/
 
 }
