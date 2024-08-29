@@ -21,6 +21,8 @@ class Student extends Authenticatable implements JWTSubject
             $image->move(public_path('students_image'), $newImageName);
 
             return $this->attributes['image'] = '/'.'students_image'.'/'.$newImageName;
+        } elseif (is_null($image)) {
+            $this->attributes['image'] = '/default_image/female.jpg';
         } elseif (is_string($image)) {
             $this->attributes['image'] = $image;
         }

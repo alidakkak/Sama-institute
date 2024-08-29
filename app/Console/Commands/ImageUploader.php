@@ -35,10 +35,10 @@ class ImageUploader extends Command
         foreach ($studentsWithImages as $student) {
             $imagePath = public_path($student->image);
 
-            if (strpos($imagePath, $directoryPath) === 0 && file_exists($imagePath)) {
+            if (file_exists($imagePath)) {
                 $response = Http::attach(
                     'image', file_get_contents($imagePath), basename($imagePath)
-                )->post('https://api.dev2.gomaplus.tech/api/upload-image', [
+                )->post('https://api.dev2.gomaplus.tech/api/uploadImage', [
                     'student_id' => $student->id,
                 ]);
 

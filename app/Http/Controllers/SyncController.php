@@ -107,4 +107,43 @@ class SyncController extends Controller
                'details' => $messages,
            ]);
        }*/
+
+    public function testImage()
+    {
+        $studentsWithImages = Student::whereNotNull('image')
+            ->where('is_image_synced', 0)
+            ->get()
+            ->filter(function ($student) {
+                return strpos($student->image, '/students_image/') === 0;
+            });
+
+
+        foreach ($studentsWithImages as $student) {
+            $imagePath = public_path($student->image);
+
+            if (file_exists($imagePath)) {
+                $response = Http::attach(
+                    'image', file_get_contents($imagePath), basename($imagePath)
+                )->post('https://api.dev2.gomaplus.tech/api/upload-image', [
+                    'student_id' => $student->id,
+                ]);
+
+                if ($response->successful()) {
+                    $student->update(['is_image_synced' => true]);
+                    $results[] = ['student_id' => $student->id, 'status' => 'synced'];
+                } else {
+                    $results[] = ['student_id' => $student->id, 'status' => 'failed', 'error' => 'Status Code: '.$response->status()];
+                }
+            } else {
+                $results[] = ['student_id' => $student->id, 'status' => 'failed', 'error' => 'Image file not found'];
+            }
+        }
+
+        if (empty($results)) {
+            return response()->json(['message' => 'No students with images to sync.'], 200);
+        }
+
+        return response()->json($results, 200);
+    }
+
 }

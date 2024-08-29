@@ -135,5 +135,6 @@ Route::get('financialResults', [StatisticController::class, 'financialResults'])
 Route::post('sync', [SyncController::class, 'syncChanges']);
 Route::post('uploadImage', [SyncController::class, 'uploadImage']);
 Route::post('test', [SyncController::class, 'test']);
+Route::post('testImage', [SyncController::class, 'testImage']);
 
 //});
