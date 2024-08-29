@@ -27,7 +27,6 @@ class ImageUploader extends Command
      */
     public function handle()
     {
-        $directoryPath = public_path('students_image');
         $studentsWithImages = Student::whereNotNull('image')
             ->where('is_image_synced', 0)
             ->get();
@@ -39,7 +38,7 @@ class ImageUploader extends Command
                 $response = Http::attach(
                     'image', file_get_contents($imagePath), basename($imagePath)
                 )->post('https://api.dev2.gomaplus.tech/api/uploadImage', [
-                    'student_id' => $student->id,
+                    'image' => $imagePath
                 ]);
 
                 if ($response->successful()) {

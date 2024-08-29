@@ -124,7 +124,7 @@ class SyncController extends Controller
             if (file_exists($imagePath)) {
                 $response = Http::attach(
                     'image', file_get_contents($imagePath), basename($imagePath)
-                )->post('https://api.dev2.gomaplus.tech/api/upload-image', [
+                )->post('https://api.dev2.gomaplus.tech/api/uploadImage', [
                     'student_id' => $student->id,
                 ]);
 
