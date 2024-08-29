@@ -40,9 +40,7 @@ class ImageUploader extends Command
             if (file_exists($imagePath)) {
                 $response = Http::attach(
                     'image', file_get_contents($imagePath), basename($imagePath)
-                )->post('https://api.dev2.gomaplus.tech/api/uploadImage', [
-                    'image' => $imagePath
-                ]);
+                )->post('https://api.dev2.gomaplus.tech/api/uploadImage');
 
                 if ($response->successful()) {
                     $student->update(['is_image_synced' => true]);

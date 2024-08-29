@@ -88,10 +88,15 @@ class StudentController extends Controller
             if (! $student) {
                 return response()->json(['message' => 'Not Found'], 404);
             }
+            $updateData = $request->except('password');
+            if ($request->hasFile('image')) {
+                $updateData['is_image_synced'] = 0;
+            }
+
             $student->update(array_merge([
                 'password' => Hash::make($request->password),
-                ...$request->except('password'),
-            ]));
+            ], $updateData));
+
             DB::commit();
 
             return response()->json([
