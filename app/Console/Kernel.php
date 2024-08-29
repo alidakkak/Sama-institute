@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         //            app('App\Http\Controllers\AttendanceController')->fetchAttendance();
         //        })->everyMinute();
         $schedule->command('app:sync-changes-to-server')->everyMinute();
+        $schedule->command('app:image-uploader')->everyMinute();
     }
 
     /**

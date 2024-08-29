@@ -40,9 +40,10 @@ return new class extends Migration
             $table->date('other_of_birth')->nullable();
             $table->string('other_Healthy')->nullable();
             $table->string('note')->nullable();
-            $table->string('image')->nullable();
+            $table->string('image')->default('/default_image/female.jpg');
             $table->string('password');
             $table->unsignedInteger('device_user_id')->nullable();
+            $table->boolean('is_image_synced')->default(false);
             $table->timestamps();
         });
     }

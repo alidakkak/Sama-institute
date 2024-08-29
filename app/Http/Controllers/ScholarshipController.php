@@ -27,15 +27,18 @@ class ScholarshipController extends Controller
 
             if ($request->discount > $scholarship->semester->price) {
                 DB::rollback();
+
                 return response()->json(['message' => 'سعر الحسم اكبر من سعر الدورة'], 422);
             }
             DB::commit();
+
             return response()->json([
                 'message' => 'Created SuccessFully',
                 'data' => ScholarshipResource::make($scholarship),
             ]);
         } catch (\Exception $e) {
             DB::rollback();
+
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),

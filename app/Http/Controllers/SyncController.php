@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -16,7 +17,7 @@ class SyncController extends Controller
         $changeType = $request->input('change_type');
         $data = $request->input('data');
 
-        if (!in_array($table, ['students', 'semesters', 'subjects', 'registrations', 'classrooms', 'subject_classrooms',
+        if (! in_array($table, ['students', 'semesters', 'subjects', 'registrations', 'classrooms', 'subject_classrooms',
             'student_subjects', 'scholarships', 'device_tokens', 'exams', 'extra_charges', 'import_logs', 'in_out_logs',
             'marks', 'notes', 'student_payments', 'teachers',
         ])) {
@@ -24,7 +25,12 @@ class SyncController extends Controller
         }
 
         try {
+            if ($table == 'students' && $request->hasFile('image')) {
+                $photoPath = $request->file('image')->store('students', 'public');
+                $data['image'] = $photoPath;
+            }
             $this->processChange($table, $recordId, $changeType, $data);
+
             return response()->json(['message' => 'Sync successful']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to process change', 'error' => $e->getMessage()], 500);
@@ -48,37 +54,57 @@ class SyncController extends Controller
         }
     }
 
- /*   public function test()
+    public function uploadImage(Request $request)
     {
-        $changes = DB::table('changes')->get();
-        $messages = [];
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = $image->getClientOriginalName();
 
-        foreach ($changes as $change) {
-            $data = DB::table($change->table_name)->where('id', $change->record_id)->first();
+            $imagePath = $image->storeAs('students_image', $imageName, 'public');
 
-            if ($data) {
-                $response = Http::post('https://api.dev2.gomaplus.tech/api/sync', [
-                    'table_name' => $change->table_name,
-                    'record_id' => $change->record_id,
-                    'change_type' => $change->change_type,
-                    'data' =>  $data,
-                ]);
+            // يمكنك تحديث بيانات الطالب هنا إذا كان لديك معرف الطالب
+            // مثلاً: $student = Student::find($request->input('student_id'));
+            //        $student->update(['image' => $imagePath]);
 
-                if ($response->successful()) {
-                    DB::table('changes')->where('id', $change->id)->delete();
-                    $messages[] = 'Successfully synced change ID: ' . $change->id;
-                } else {
-                    $messages[] = 'Failed to sync change ID: ' . $change->id . ' - Status Code: ' . $response->status();
-                }
-            } else {
-                Log::error('Failed to fetch data for change ID: ' . $change->id);
-                $messages[] = 'Failed to fetch data for change ID: ' . $change->id;
-            }
+            $this->info('Image uploaded successfully: '.$imagePath);
+
+            return response()->json(['message' => 'Image uploaded successfully', 'path' => $imagePath], 200);
         }
 
-        return response()->json([
-            'message' => 'Sync process completed.',
-            'details' => $messages,
-        ]);
-    }*/
+        return response()->json(['message' => 'No image uploaded'], 400);
+    }
+
+    /*   public function test()
+       {
+           $changes = DB::table('changes')->get();
+           $messages = [];
+
+           foreach ($changes as $change) {
+               $data = DB::table($change->table_name)->where('id', $change->record_id)->first();
+
+               if ($data) {
+                   $response = Http::post('https://api.dev2.gomaplus.tech/api/sync', [
+                       'table_name' => $change->table_name,
+                       'record_id' => $change->record_id,
+                       'change_type' => $change->change_type,
+                       'data' =>  $data,
+                   ]);
+
+                   if ($response->successful()) {
+                       DB::table('changes')->where('id', $change->id)->delete();
+                       $messages[] = 'Successfully synced change ID: ' . $change->id;
+                   } else {
+                       $messages[] = 'Failed to sync change ID: ' . $change->id . ' - Status Code: ' . $response->status();
+                   }
+               } else {
+                   Log::error('Failed to fetch data for change ID: ' . $change->id);
+                   $messages[] = 'Failed to fetch data for change ID: ' . $change->id;
+               }
+           }
+
+           return response()->json([
+               'message' => 'Sync process completed.',
+               'details' => $messages,
+           ]);
+       }*/
 }
