@@ -62,17 +62,12 @@ class SyncController extends Controller
 
             $imagePath = $image->storeAs('students_image', $imageName, 'public');
 
-            // يمكنك تحديث بيانات الطالب هنا إذا كان لديك معرف الطالب
-            // مثلاً: $student = Student::find($request->input('student_id'));
-            //        $student->update(['image' => $imagePath]);
-
-            $this->info('Image uploaded successfully: '.$imagePath);
-
             return response()->json(['message' => 'Image uploaded successfully', 'path' => $imagePath], 200);
         }
 
         return response()->json(['message' => 'No image uploaded'], 400);
     }
+
 
     /*   public function test()
        {
@@ -117,6 +112,7 @@ class SyncController extends Controller
                 return strpos($student->image, '/students_image/') === 0;
             });
 
+        $results = [];
 
         foreach ($studentsWithImages as $student) {
             $imagePath = public_path($student->image);
@@ -125,11 +121,11 @@ class SyncController extends Controller
                 $response = Http::attach(
                     'image', file_get_contents($imagePath), basename($imagePath)
                 )->post('https://api.dev2.gomaplus.tech/api/uploadImage', [
-                    'image' => $imagePath,
+                    'student_id' => $student->id, // يمكن إرسال معرف الطالب إذا كان ضرورياً على السيرفر
                 ]);
 
                 if ($response->successful()) {
-                    $student->update(['is_image_synced' => true]);
+                    $student->update(['is_image_synced' => 1]);
                     $results[] = ['student_id' => $student->id, 'status' => 'synced'];
                 } else {
                     $results[] = ['student_id' => $student->id, 'status' => 'failed', 'error' => 'Status Code: '.$response->status()];
@@ -145,5 +141,6 @@ class SyncController extends Controller
 
         return response()->json($results, 200);
     }
+
 
 }
