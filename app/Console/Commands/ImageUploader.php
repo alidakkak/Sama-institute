@@ -27,9 +27,15 @@ class ImageUploader extends Command
      */
     public function handle()
     {
+        // جلب الطلاب الذين لديهم صور غير مرفوعة بعد
         $studentsWithImages = Student::whereNotNull('image')
             ->where('is_image_synced', 0)
-            ->get();
+            ->get()
+            ->filter(function ($student) {
+                return strpos($student->image, '/students_image/') === 0;
+            });
+
+        $results = [];
 
         foreach ($studentsWithImages as $student) {
             $imagePath = public_path($student->image);
@@ -38,18 +44,33 @@ class ImageUploader extends Command
                 $response = Http::attach(
                     'image', file_get_contents($imagePath), basename($imagePath)
                 )->post('https://api.dev2.gomaplus.tech/api/uploadImage', [
-                    'image' => $imagePath
+                    'student_id' => $student->id,
                 ]);
 
                 if ($response->successful()) {
-                    $student->update(['is_image_synced' => true]);
-                    $this->info('Image for student ID '.$student->id.' synced successfully.');
+                    $student->update(['is_image_synced' => 1]);
+                    $results[] = ['student_id' => $student->id, 'status' => 'synced'];
                 } else {
-                    $this->error('Failed to sync image for student ID '.$student->id.' - Status Code: '.$response->status());
+                    $results[] = [
+                        'student_id' => $student->id,
+                        'status' => 'failed',
+                        'error' => 'Status Code: '.$response->status()
+                    ];
                 }
             } else {
-                $this->error('Image file not found for student ID '.$student->id);
+                $results[] = [
+                    'student_id' => $student->id,
+                    'status' => 'failed',
+                    'error' => 'Image file not found'
+                ];
             }
         }
+
+        if (empty($results)) {
+            return response()->json(['message' => 'No students with images to sync.'], 200);
+        }
+
+        return response()->json($results, 200);
     }
+
 }
