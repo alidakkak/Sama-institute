@@ -60,7 +60,7 @@ class SyncController extends Controller
             $image = $request->file('image');
             $imageName = $image->getClientOriginalName();
 
-            $imagePath = $image->storeAs('students_image', $imageName, 'public');
+            $imagePath = $image->move(public_path('students_image'), $imageName);
 
             return response()->json(['message' => 'Image uploaded successfully', 'path' => $imagePath], 200);
         }
