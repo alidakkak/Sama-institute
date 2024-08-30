@@ -11,6 +11,7 @@ use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentPayment;
 use App\Services\FirebaseService;
+use Illuminate\Support\Facades\DB;
 
 class StudentPaymentController extends Controller
 {
@@ -35,6 +36,7 @@ class StudentPaymentController extends Controller
 
     public function store(StoreStudentPaymentRequest $request)
     {
+        DB::beginTransaction();
         try {
             $student = Student::find($request->student_id);
             $semester = Semester::find($request->semester_id);
@@ -50,6 +52,10 @@ class StudentPaymentController extends Controller
             }
             $after_discount = $registration->after_discount;
             $financialDues = $registration->financialDues;
+
+            if ($after_discount < $request->price || $financialDues < $request->price) {
+                return response()->json(['message' => 'المبلغ المدفوع اكبر من المستحقات']);
+            }
 
             $studentPayment = StudentPayment::create($request->all());
 
@@ -78,12 +84,13 @@ class StudentPaymentController extends Controller
             ];
             $firebaseNotification = new FirebaseService;
             $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
-
+            DB::commit();
             return response()->json([
                 'message' => 'Created Successfully',
                 'data' => StudentPaymentResource::make($studentPayment),
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),
