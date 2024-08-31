@@ -76,7 +76,6 @@ class StudentPaymentController extends Controller
             $body = $request->title;
             /// Device Key
             $FcmToken = DeviceToken::where('student_id', $student->id)->pluck('device_token')->toArray();
-            return $FcmToken;
 
             $data = [
                 'type' => 'payment',

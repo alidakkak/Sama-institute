@@ -72,8 +72,7 @@ class SyncController extends Controller
             ->toArray();
 
         return response()->json([
-            'success' => true,
-            'fcm_tokens' => $fcmTokens,
+             $fcmTokens,
         ], 200);
     }
 
