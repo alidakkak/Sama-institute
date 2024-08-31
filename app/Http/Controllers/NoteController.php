@@ -45,6 +45,7 @@ class NoteController extends Controller
             $FcmToken = Http::get('https://api.dev2.gomaplus.tech/api/getFcmTokensFromServer', [
                 'student_id' => $note->student_id,
             ]);
+            return $FcmToken;
 
             $data = ['type' => 'note', 'title' => $note->title];
             $firebaseNotification = new FirebaseService;
