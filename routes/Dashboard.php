@@ -134,6 +134,7 @@ Route::get('financialResults', [StatisticController::class, 'financialResults'])
 /// Sync
 Route::post('sync', [SyncController::class, 'syncChanges']);
 Route::post('uploadImage', [SyncController::class, 'uploadImage']);
+Route::get('getFcmTokensFromServer', [SyncController::class, 'getFcmTokens']);
 //Route::post('test', [SyncController::class, 'test']);
 //Route::post('testImage', [SyncController::class, 'testImage']);
 

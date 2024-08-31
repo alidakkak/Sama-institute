@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeviceToken;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +63,18 @@ class SyncController extends Controller
         }
 
         return response()->json(['message' => 'No image uploaded'], 400);
+    }
+
+    public function getFcmTokens(Request $request)
+    {
+        $fcmTokens = DeviceToken::where('student_id', $request->student_id)
+            ->pluck('device_token')
+            ->toArray();
+
+        return response()->json([
+            'success' => true,
+            'fcm_tokens' => $fcmTokens,
+        ], 200);
     }
 
 

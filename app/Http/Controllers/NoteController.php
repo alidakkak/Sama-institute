@@ -7,9 +7,11 @@ use App\Http\Requests\UpdateNoteRequest;
 use App\Http\Resources\NoteResource;
 use App\Models\DeviceToken;
 use App\Models\Note;
+use App\Models\Notification;
 use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class NoteController extends Controller
 {
@@ -40,16 +42,28 @@ class NoteController extends Controller
 
             $title = 'تم إضافة ملاحظة جديدة';
             $body = $note->title;
-            /// Device Key
-            $FcmToken = DeviceToken::where('student_id', $note->student_id)->pluck('device_token')->toArray();
+            $FcmToken = Http::get('https://api.dev2.gomaplus.tech/api/getFcmTokensFromServer', [
+                'student_id' => $note->student_id,
+            ]);
 
             $data = ['type' => 'note', 'title' => $note->title];
             $firebaseNotification = new FirebaseService;
-            $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
+
+            try {
+                $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
+            } catch (\Exception $e) {
+                Notification::create([
+                    'student_id' => $note->student_id,
+                    'title' => $title,
+                    'body' => $body,
+                    'data' => json_encode($data),
+                ]);
+            }
+
             DB::commit();
 
             return response()->json([
-                'message' => 'Created SuccessFully',
+                'message' => 'Created Successfully',
                 'data' => NoteResource::make($note),
             ]);
         } catch (\Exception $e) {
@@ -61,6 +75,7 @@ class NoteController extends Controller
             ], 500);
         }
     }
+
 
     public function update(UpdateNoteRequest $request, $noteId)
     {
