@@ -71,9 +71,7 @@ class SyncController extends Controller
             ->pluck('device_token')
             ->toArray();
 
-        return response()->json([
-             $fcmTokens,
-        ], 200);
+        return response()->json($fcmTokens);
     }
 
 
