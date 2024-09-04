@@ -42,15 +42,16 @@ class NoteController extends Controller
 
             $title = 'تم إضافة ملاحظة جديدة';
             $body = $note->title;
-            $FcmToken = Http::get('https://api.dev2.gomaplus.tech/api/getFcmTokensFromServer', [
-                'student_id' => $note->student_id,
-            ]);
-
             $data = ['type' => 'note', 'title' => $note->title];
-            $firebaseNotification = new FirebaseService;
 
             try {
-                $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
+                $FcmToken = Http::get('https://api.dev2.gomaplus.tech/api/getFcmTokensFromServer', [
+                    'student_id' => $note->student_id,
+                ]);
+
+                $firebaseNotification = new FirebaseService;
+
+                $firebaseNotification->BasicSendNotification($title, $body, $FcmToken->json(), $data);
             } catch (\Exception $e) {
                 Notification::create([
                     'student_id' => $note->student_id,
@@ -75,7 +76,6 @@ class NoteController extends Controller
             ], 500);
         }
     }
-
 
     public function update(UpdateNoteRequest $request, $noteId)
     {

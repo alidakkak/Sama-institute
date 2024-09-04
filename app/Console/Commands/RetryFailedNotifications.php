@@ -40,13 +40,13 @@ class RetryFailedNotifications extends Command
                 $firebaseNotification->BasicSendNotification(
                     $notification->title,
                     $notification->body,
-                    $FcmToken,
+                    $FcmToken->json(),
                     json_decode($notification->data, true)
                 );
 
                 $notification->delete();
             } catch (\Exception $e) {
-                $this->error('Failed to resend notification ID: ' . $notification->id);
+                $this->error('Failed to resend notification ID: '.$notification->id);
             }
         }
 

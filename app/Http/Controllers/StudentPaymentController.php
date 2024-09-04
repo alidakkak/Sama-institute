@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreStudentPaymentRequest;
 use App\Http\Requests\UpdateStudentPaymentRequest;
 use App\Http\Resources\StudentPaymentResource;
-use App\Models\DeviceToken;
+use App\Models\Notification;
 use App\Models\Registration;
 use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentPayment;
 use App\Services\FirebaseService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class StudentPaymentController extends Controller
 {
@@ -74,23 +75,37 @@ class StudentPaymentController extends Controller
 
             $title = 'تم إضافة دفعة جديدة';
             $body = $request->title;
-            /// Device Key
-            $FcmToken = DeviceToken::where('student_id', $student->id)->pluck('device_token')->toArray();
-
             $data = [
                 'type' => 'payment',
                 'title' => $request->title,
                 'price' => $request->price,
             ];
-            $firebaseNotification = new FirebaseService;
-            $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
+
+            try {
+                $FcmToken = Http::get('https://api.dev2.gomaplus.tech/api/getFcmTokensFromServer', [
+                    'student_id' => $studentPayment->student_id,
+                ]);
+
+                $firebaseNotification = new FirebaseService;
+
+                $firebaseNotification->BasicSendNotification($title, $body, $FcmToken->json(), $data);
+            } catch (\Exception $e) {
+                Notification::create([
+                    'student_id' => $studentPayment->student_id,
+                    'title' => $title,
+                    'body' => $body,
+                    'data' => json_encode($data),
+                ]);
+            }
             DB::commit();
+
             return response()->json([
                 'message' => 'Created Successfully',
                 'data' => StudentPaymentResource::make($studentPayment),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),

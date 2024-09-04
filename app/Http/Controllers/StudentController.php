@@ -59,7 +59,7 @@ class StudentController extends Controller
     {
         DB::beginTransaction();
         try {
-            $password = Str::random(10);
+            $password = Str::random(6);
             $student = Student::create(array_merge([
                 'password' => Hash::make($password),
                 ...$request->except('password'),

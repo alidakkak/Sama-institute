@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExtraChargeController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\NoteController;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/loginStudent', [StudentController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
 
 Route::group(['middleware' => 'auth:api_student'], function () {
     /// Get Information For Student

@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMarkRequest;
 use App\Http\Requests\UpdateMarkRequest;
 use App\Http\Resources\MarkResource;
-use App\Models\DeviceToken;
 use App\Models\Exam;
 use App\Models\Mark;
+use App\Models\Notification;
 use App\Models\Registration;
 use App\Models\Semester;
 use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class MarkController extends Controller
 {
@@ -35,6 +36,7 @@ class MarkController extends Controller
             $data = $request->validated();
             $notificationsData = [];
 
+            // جلب العلامات الحالية وتخزين العلامات الجديدة
             $allMarks = Mark::whereIn('student_id', $data['student_id'])
                 ->where('semester_id', $data['semester_id'])
                 ->get()
@@ -56,7 +58,31 @@ class MarkController extends Controller
                     $allMarks[$student_id] = [$mark];
                 }
 
-                $tokens = DeviceToken::where('student_id', $mark->student_id)->pluck('device_token')->toArray();
+                try {
+                    $FcmTokenResponse = Http::get('https://api.dev2.gomaplus.tech/api/getFcmTokensFromServer', [
+                        'student_id' => $mark->student_id,
+                    ]);
+
+                    if ($FcmTokenResponse->successful()) {
+                        $FcmToken = $FcmTokenResponse->json();
+                    } else {
+                        throw new \Exception('Failed to retrieve FCM tokens');
+                    }
+                } catch (\Exception $e) {
+                    Notification::create([
+                        'student_id' => $mark->student_id,
+                        'title' => 'تم إضافة علامة جديدة',
+                        'body' => 'علامة مادة: '.$mark->subject->name.' تم إضافتها.',
+                        'data' => json_encode([
+                            'type' => 'mark',
+                            'result' => $mark->result,
+                            'date' => $mark->date,
+                            'status' => $mark->result >= 40 ? 'ناجح' : 'راسب',
+                        ]),
+                    ]);
+
+                    continue;
+                }
 
                 $notificationsData[] = [
                     'title' => 'تم إضافة علامة جديدة',
@@ -67,10 +93,12 @@ class MarkController extends Controller
                         'date' => $mark->date,
                         'status' => $mark->result >= 40 ? 'ناجح' : 'راسب',
                     ],
-                    'tokens' => $tokens,
+                    'tokens' => $FcmToken,
+                    'student_id' => $mark->student_id,
                 ];
             }
 
+            // حساب الـ GPA وتحديثه في الـ Registration
             foreach ($allMarks as $student_id => $marks) {
                 $totalWeightedMarks = 0;
                 $totalPercent = 0;
@@ -96,12 +124,21 @@ class MarkController extends Controller
 
             $firebaseNotification = new FirebaseService;
             foreach ($notificationsData as $notification) {
-                $firebaseNotification->BasicSendNotification(
-                    $notification['title'],
-                    $notification['body'],
-                    $notification['tokens'],
-                    $notification['data']
-                );
+                try {
+                    $firebaseNotification->BasicSendNotification(
+                        $notification['title'],
+                        $notification['body'],
+                        $notification['tokens'],
+                        $notification['data']
+                    );
+                } catch (\Exception $e) {
+                    Notification::create([
+                        'student_id' => $notification['student_id'],
+                        'title' => $notification['title'],
+                        'body' => $notification['body'],
+                        'data' => json_encode($notification['data']),
+                    ]);
+                }
             }
 
             return response()->json([

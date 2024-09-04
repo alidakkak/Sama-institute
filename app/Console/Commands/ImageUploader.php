@@ -27,30 +27,35 @@ class ImageUploader extends Command
      */
     public function handle()
     {
-        $studentsWithImages = Student::whereNotNull('image')
-            ->where('is_image_synced', 0)
-            ->get()
-            ->filter(function ($student) {
-                return strpos($student->image, '/students_image/') === 0;
-            });
+        try {
+            $studentsWithImages = Student::whereNotNull('image')
+                ->where('is_image_synced', 0)
+                ->get()
+                ->filter(function ($student) {
+                    return strpos($student->image, '/students_image/') === 0;
+                });
 
-        foreach ($studentsWithImages as $student) {
-            $imagePath = public_path($student->image);
+            foreach ($studentsWithImages as $student) {
+                $imagePath = public_path($student->image);
 
-            if (file_exists($imagePath)) {
-                $response = Http::attach(
-                    'image', file_get_contents($imagePath), basename($imagePath)
-                )->post('https://api.dev2.gomaplus.tech/api/uploadImage');
+                if (file_exists($imagePath)) {
+                    $response = Http::attach(
+                        'image', file_get_contents($imagePath), basename($imagePath)
+                    )->post('https://api.dev2.gomaplus.tech/api/uploadImage');
 
-                if ($response->successful()) {
-                    $student->update(['is_image_synced' => true]);
-                    $this->info('Image for student ID '.$student->id.' synced successfully.');
+                    if ($response->successful()) {
+                        $student->update(['is_image_synced' => true]);
+                        $this->info('Image for student ID '.$student->id.' synced successfully.');
+                    } else {
+                        $this->error('Failed to sync image for student ID '.$student->id.' - Status Code: '.$response->status());
+                    }
                 } else {
-                    $this->error('Failed to sync image for student ID '.$student->id.' - Status Code: '.$response->status());
+                    $this->error('Image file not found for student ID '.$student->id);
                 }
-            } else {
-                $this->error('Image file not found for student ID '.$student->id);
             }
+        } catch (\Exception $e) {
+            $this->error('No Internet connection available or other error occurred');
         }
+        $this->info('process completed.');
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeviceToken;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -28,8 +30,17 @@ class AuthController extends Controller
         return $this->createNewToken($token);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
+        $studentID = auth::guard('api_student')->user()->id;
+
+        $deviceToken = $request->deviceToken;
+
+        if ($deviceToken) {
+            DeviceToken::where('student_id', $studentID)
+                ->where('token', $deviceToken)
+                ->delete();
+        }
         auth()->logout();
 
         return response()->json(['message' => 'User successfully signed out']);

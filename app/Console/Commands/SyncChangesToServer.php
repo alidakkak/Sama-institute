@@ -34,26 +34,30 @@ class SyncChangesToServer extends Command
     {
         $changes = DB::table('changes')->get();
 
-        foreach ($changes as $change) {
-            $data = DB::table($change->table_name)->where('id', $change->record_id)->first();
+        try {
+            foreach ($changes as $change) {
+                $data = DB::table($change->table_name)->where('id', $change->record_id)->first();
 
-            if ($data) {
-                $response = Http::post('https://api.dev2.gomaplus.tech/api/sync', [
-                    'table_name' => $change->table_name,
-                    'record_id' => $change->record_id,
-                    'change_type' => $change->change_type,
-                    'data' => $data,
-                ]);
+                if ($data) {
+                    $response = Http::post('https://api.dev2.gomaplus.tech/api/sync', [
+                        'table_name' => $change->table_name,
+                        'record_id' => $change->record_id,
+                        'change_type' => $change->change_type,
+                        'data' => $data,
+                    ]);
 
-                if ($response->successful()) {
-                    DB::table('changes')->where('id', $change->id)->delete();
-                    $this->info('Successfully synced change ID: '.$change->id);
+                    if ($response->successful()) {
+                        DB::table('changes')->where('id', $change->id)->delete();
+                        $this->info('Successfully synced change ID: '.$change->id);
+                    } else {
+                        $this->error('Failed to sync change ID: '.$change->id.' - Status Code: '.$response->status());
+                    }
                 } else {
-                    $this->error('Failed to sync change ID: '.$change->id.' - Status Code: '.$response->status());
+                    $this->error('Failed to fetch data for change ID: '.$change->id);
                 }
-            } else {
-                $this->error('Failed to fetch data for change ID: '.$change->id);
             }
+        } catch (\Exception $e) {
+            $this->error('No Internet connection available or other error occurred');
         }
 
         $this->info('Sync process completed.');
