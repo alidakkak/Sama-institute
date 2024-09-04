@@ -93,9 +93,7 @@ class StudentController extends Controller
                 $updateData['is_image_synced'] = 0;
             }
 
-            $student->update(array_merge([
-                'password' => Hash::make($request->password),
-            ], $updateData));
+            $student->update($updateData);
 
             DB::commit();
 
