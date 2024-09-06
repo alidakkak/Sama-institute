@@ -96,21 +96,4 @@ class AttendanceController extends Controller
 
         return AttendanceResource::collection($attendance);
     }
-
-    public function addAttendance(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'student_id' => 'required|integer|exists:students,id',
-            'in_time' => 'required|date_format:Y-m-d H:i:s',
-            'out_time' => 'nullable|date_format:Y-m-d H:i:s|after:in_time',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        InOutLog::create($request->only(['student_id', 'in_time', 'out_time']));
-
-        return response()->json(['message' => 'Successfully added attendance record']);
-    }
 }

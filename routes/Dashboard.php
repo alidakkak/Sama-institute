@@ -104,7 +104,6 @@ Route::post('specialDiscount', [ScholarshipController::class, 'specialDiscount']
 Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
 Route::get('attendances', [AttendanceController::class, 'test']);
 Route::get('getAttendance/{studentID}', [AttendanceController::class, 'getAttendance']);
-Route::post('addAttendance', [AttendanceController::class, 'addAttendance']);
 
 //// Teacher
 Route::get('teachers', [TeacherController::class, 'index']);

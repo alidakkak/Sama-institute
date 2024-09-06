@@ -74,23 +74,70 @@ class ExtraChargeController extends Controller
     public function update(UpdateExtraChargeRequest $request, $extraChargeId)
     {
         try {
+            DB::beginTransaction();
+
             $extraCharge = ExtraCharge::find($extraChargeId);
             if (! $extraCharge) {
                 return response()->json(['message' => 'Not Found'], 404);
             }
+
+            $oldPrice = $extraCharge->price;
+
             $extraCharge->update($request->all());
 
+            $registration = Registration::where('student_id', $request->student_id)
+                ->where('semester_id', $request->semester_id)->first();
+
+            if (! $registration) {
+                DB::rollback();
+                return response()->json(['message' => 'الطالب غير مسجل في الدورة'], 404);
+            }
+
+            $registration->update([
+                'total_dues_without_decrease' => $registration->total_dues_without_decrease - $oldPrice,
+            ]);
+
+            if ($registration->scholarship_id !== null) {
+                $registration->update([
+                    'after_discount' => $registration->after_discount - $oldPrice,
+                ]);
+            } else {
+                $registration->update([
+                    'financialDues' => $registration->financialDues - $oldPrice,
+                ]);
+            }
+
+            $newPrice = $request->price;
+            $registration->update([
+                'total_dues_without_decrease' => $registration->total_dues_without_decrease + $newPrice,
+            ]);
+
+            if ($registration->scholarship_id !== null) {
+                $registration->update([
+                    'after_discount' => $registration->after_discount + $newPrice,
+                ]);
+            } else {
+                $registration->update([
+                    'financialDues' => $registration->financialDues + $newPrice,
+                ]);
+            }
+
+            DB::commit();
+
             return response()->json([
-                'message' => 'Updated SuccessFully',
+                'message' => 'Updated Successfully',
                 'data' => ExtraChargeResource::make($extraCharge),
             ]);
         } catch (\Exception $e) {
+            DB::rollback();
+
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
     public function show($extraChargeId)
     {

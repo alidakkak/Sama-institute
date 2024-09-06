@@ -6,6 +6,7 @@ use App\Http\Requests\StoreExamRequest;
 use App\Http\Requests\UpdateExamRequest;
 use App\Http\Resources\ExamResource;
 use App\Models\Exam;
+use App\Status\Semester;
 
 class ExamController extends Controller
 {
@@ -37,9 +38,17 @@ class ExamController extends Controller
     {
         try {
             $exam = Exam::find($examId);
+
             if (! $exam) {
                 return response()->json(['message' => 'Not Found'], 404);
             }
+
+            $semesterStatus = $exam->semester->status;
+
+            if ($semesterStatus != Semester::waiting) {
+                return response()->json(['message' => 'الدورة في حالة بدء لا يمكن التعديل عليها']);
+            }
+
             $exam->update($request->all());
 
             return response()->json([
