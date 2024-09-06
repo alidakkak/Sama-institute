@@ -156,24 +156,53 @@ class MarkController extends Controller
 
     public function update(UpdateMarkRequest $request, $markId)
     {
+        DB::beginTransaction();
         try {
             $mark = Mark::find($markId);
             if (! $mark) {
                 return response()->json(['message' => 'Not Found'], 404);
             }
+
             $mark->update($request->only('result'));
 
+            $allMarks = Mark::where('student_id', $mark->student_id)
+                ->where('semester_id', $mark->semester_id)
+                ->get();
+
+            $totalWeightedMarks = 0;
+            $totalPercent = 0;
+
+            foreach ($allMarks as $studentMark) {
+                $examPercent = Exam::where('id', $studentMark->exam_id)->value('percent');
+                $totalWeightedMarks += $studentMark->result * ($examPercent / 100);
+                $totalPercent += $examPercent;
+            }
+
+            if ($totalPercent > 0) {
+                $GPA = $totalWeightedMarks / ($totalPercent / 100);
+            } else {
+                $GPA = 0;
+            }
+
+            Registration::where('student_id', $mark->student_id)
+                ->where('semester_id', $mark->semester_id)
+                ->update(['GPA' => round($GPA, 2)]);
+
+            DB::commit();
+
             return response()->json([
-                'message' => 'Updated SuccessFully',
+                'message' => 'Updated Successfully',
                 'data' => MarkResource::make($mark),
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
     //// Get Student By SemesterID, SubjectID, ExamID
     public function showStudent(StoreMarkRequest $request)
