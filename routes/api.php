@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('/loginStudent', [StudentController::class, 'login']);
 
-Route::group(['middleware' => 'auth:api_student'], function () {
     Route::post('logout', [AuthController::class, 'logout']);
+Route::group(['middleware' => 'auth:api_student'], function () {
 
     /// Get Information For Student
     Route::get('getInfoStudent', [StudentController::class, 'getInfoStudent']);
