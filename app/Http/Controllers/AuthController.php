@@ -33,6 +33,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $studentID = auth::guard('api_student')->user()->id;
+        return $studentID;
 
         $deviceToken = $request->deviceToken;
 
