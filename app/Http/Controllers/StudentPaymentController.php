@@ -48,14 +48,14 @@ class StudentPaymentController extends Controller
 
             if (! $registration) {
                 return response()->json([
-                    'message' => 'Registration not found',
+                    'message' => 'الطالب غير مسجل في الدورة',
                 ], 404);
             }
             $after_discount = $registration->after_discount;
             $financialDues = $registration->financialDues;
 
             if ($after_discount < $request->price || $financialDues < $request->price) {
-                return response()->json(['message' => 'المبلغ المدفوع اكبر من المستحقات']);
+                return response()->json(['message' => 'المبلغ المدفوع اكبر من المستحقات'], 400);
             }
 
             $studentPayment = StudentPayment::create($request->all());
@@ -116,19 +116,48 @@ class StudentPaymentController extends Controller
     public function update(UpdateStudentPaymentRequest $request, $Id)
     {
         try {
+            DB::beginTransaction();
+
             $studentPayment = StudentPayment::find($Id);
             if (! $studentPayment) {
-                return response()->json(['message' => 'Not Found'], 404);
+                return response()->json(['message' => 'الدفعة غير موجودة'], 404);
             }
+
+            $oldPrice = $studentPayment->price;
+
             $studentPayment->update($request->all());
 
+            $registration = Registration::where('student_id', $request->student_id)
+                ->where('semester_id', $request->semester_id)
+                ->first();
+
+            if (! $registration) {
+                DB::rollback();
+
+                return response()->json(['message' => 'الطالب غير مسجل في الدورة'], 404);
+            }
+
+            $newPrice = $request->price;
+
+            if ($registration->scholarship_id !== null) {
+                $updates['after_discount'] = $registration->after_discount + $oldPrice - $newPrice;
+            } else {
+                $updates['financialDues'] = $registration->financialDues + $oldPrice - $newPrice;
+            }
+
+            $registration->update($updates);
+
+            DB::commit();
+
             return response()->json([
-                'message' => 'Updated SuccessFully',
+                'message' => 'تم التحديث بنجاح',
                 'data' => StudentPaymentResource::make($studentPayment),
             ]);
         } catch (\Exception $e) {
+            DB::rollback();
+
             return response()->json([
-                'message' => 'An error occurred',
+                'message' => 'حدث خطأ أثناء التحديث',
                 'error' => $e->getMessage(),
             ], 500);
         }

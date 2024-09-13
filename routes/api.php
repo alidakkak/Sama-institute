@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExtraChargeController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\NoteController;

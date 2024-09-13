@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DeviceToken;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller

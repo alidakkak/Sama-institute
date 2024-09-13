@@ -90,6 +90,7 @@ class ExtraChargeController extends Controller
 
             if (! $registration) {
                 DB::rollback();
+
                 return response()->json(['message' => 'الطالب غير مسجل في الدورة'], 404);
             }
 
@@ -138,7 +139,6 @@ class ExtraChargeController extends Controller
         }
     }
 
-
     public function show($extraChargeId)
     {
         $extraCharge = ExtraCharge::find($extraChargeId);
@@ -151,20 +151,47 @@ class ExtraChargeController extends Controller
 
     public function delete($extraChargeId)
     {
+        DB::beginTransaction();
+
         try {
             $extraCharge = ExtraCharge::find($extraChargeId);
+
             if (! $extraCharge) {
-                return response()->json(['message' => 'Not Found'], 404);
+                return response()->json(['message' => 'الرسوم الإضافية غير موجودة'], 404);
             }
+
+            $oldPrice = $extraCharge->price;
+
+            $registration = Registration::where('student_id', $extraCharge->student_id)
+                ->where('semester_id', $extraCharge->semester_id)
+                ->first();
+
+            if (! $registration) {
+                DB::rollBack();
+
+                return response()->json(['message' => 'الطالب غير مسجل في الدورة'], 404);
+            }
+
+            $updates = ['total_dues_without_decrease' => $registration->total_dues_without_decrease - $oldPrice];
+            if ($registration->scholarship_id !== null) {
+                $updates['after_discount'] = $registration->after_discount - $oldPrice;
+            } else {
+                $updates['financialDues'] = $registration->financialDues - $oldPrice;
+            }
+
+            $registration->update($updates);
+
             $extraCharge->delete();
 
-            return response()->json([
-                'message' => 'Deleted SuccessFully',
-                'data' => ExtraChargeResource::make($extraCharge),
-            ]);
+            DB::commit();
+
+            return response()->json(['message' => 'تم الحذف بنجاح'], 200);
+
         } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json([
-                'message' => 'An error occurred',
+                'message' => 'حدث خطأ أثناء الحذف',
                 'error' => $e->getMessage(),
             ], 500);
         }

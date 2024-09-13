@@ -196,13 +196,13 @@ class MarkController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
-
 
     //// Get Student By SemesterID, SubjectID, ExamID
     public function showStudent(StoreMarkRequest $request)

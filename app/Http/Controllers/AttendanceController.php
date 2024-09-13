@@ -3,17 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AttendanceResource;
-use App\Models\DeviceToken;
 use App\Models\ImportLog;
 use App\Models\InOutLog;
 use App\Models\Notification;
 use App\Models\Student;
 use App\Services\FirebaseService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use Jmrashed\Zkteco\Lib\ZKTeco;
 
 class AttendanceController extends Controller
@@ -81,10 +78,10 @@ class AttendanceController extends Controller
                 $firebaseNotification = new FirebaseService;
                 $firebaseNotification->BasicSendNotification($title, $body, $FcmToken->json(), $data);
             } else {
-                Log::error('Failed to retrieve FCM token for student_id: ' . $studentId);
+                Log::error('Failed to retrieve FCM token for student_id: '.$studentId);
             }
         } catch (\Exception $e) {
-            Log::error('Error sending notification: ' . $e->getMessage());
+            Log::error('Error sending notification: '.$e->getMessage());
 
             Notification::create([
                 'student_id' => $studentId,
@@ -94,7 +91,6 @@ class AttendanceController extends Controller
             ]);
         }
     }
-
 
     public function getAttendance($studentID)
     {
