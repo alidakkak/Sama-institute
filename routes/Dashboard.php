@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
 
-//Route::group(['middleware' => 'check_user:1'], function () {
+Route::group(['middleware' => 'check_user:1'], function () {
 
 //// Semester
 Route::get('semesters', [SemesterController::class, 'index']);
@@ -102,7 +102,6 @@ Route::post('specialDiscount', [ScholarshipController::class, 'specialDiscount']
 
 /// Attendance
 Route::post('attendances', [AttendanceController::class, 'fetchAttendance']);
-Route::get('attendances', [AttendanceController::class, 'test']);
 Route::get('getAttendance/{studentID}', [AttendanceController::class, 'getAttendance']);
 
 //// Teacher
@@ -137,4 +136,4 @@ Route::get('getFcmTokensFromServer', [SyncController::class, 'getFcmTokens']);
 //Route::post('test', [SyncController::class, 'test']);
 //Route::post('testImage', [SyncController::class, 'testImage']);
 
-//});
+});

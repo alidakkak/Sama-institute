@@ -8,6 +8,7 @@ use App\Http\Resources\StudentResource;
 use App\Models\DeviceToken;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -225,5 +226,21 @@ class StudentController extends Controller
             'newPassword' => $newPassword,
             'phone_number' => $student->phone_number,
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $studentID = auth::guard('api_student')->user()->id;
+
+        $deviceToken = $request->deviceToken;
+
+        if ($deviceToken) {
+            DeviceToken::where('student_id', $studentID)
+                ->where('device_token', $deviceToken)
+                ->delete();
+        }
+        auth()->logout();
+
+        return response()->json(['message' => 'User successfully signed out']);
     }
 }

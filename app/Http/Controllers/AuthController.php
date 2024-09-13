@@ -30,23 +30,6 @@ class AuthController extends Controller
         return $this->createNewToken($token);
     }
 
-    public function logout(Request $request)
-    {
-        $studentID = auth::guard('api_student')->user()->id;
-        return $studentID;
-
-        $deviceToken = $request->deviceToken;
-
-        if ($deviceToken) {
-            DeviceToken::where('student_id', $studentID)
-                ->where('token', $deviceToken)
-                ->delete();
-        }
-        auth()->logout();
-
-        return response()->json(['message' => 'User successfully signed out']);
-    }
-
     protected function createNewToken($token)
     {
         return response()->json([

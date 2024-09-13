@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExtraChargeController;
 use App\Http\Controllers\MarkController;
@@ -21,8 +22,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('/loginStudent', [StudentController::class, 'login']);
 
-    Route::post('logout', [AuthController::class, 'logout']);
 Route::group(['middleware' => 'auth:api_student'], function () {
+    Route::post('logout', [StudentController::class, 'logout']);
 
     /// Get Information For Student
     Route::get('getInfoStudent', [StudentController::class, 'getInfoStudent']);
@@ -46,4 +47,7 @@ Route::group(['middleware' => 'auth:api_student'], function () {
 
     /// Get Student Registration
     Route::get('getStudentRegistration', [StudentController::class, 'getStudentRegistration']);
+
+    /// Attendances
+    Route::get('getAttendances', [AttendanceController::class, 'getAttendances']);
 });

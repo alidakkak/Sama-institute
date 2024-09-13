@@ -6,9 +6,13 @@ use App\Http\Resources\AttendanceResource;
 use App\Models\DeviceToken;
 use App\Models\ImportLog;
 use App\Models\InOutLog;
+use App\Models\Notification;
 use App\Models\Student;
 use App\Services\FirebaseService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Jmrashed\Zkteco\Lib\ZKTeco;
 
@@ -21,21 +25,24 @@ class AttendanceController extends Controller
         if ($zk->connect()) {
             $attendances = $zk->getAttendance();
 
-            // الحصول على آخر وقت استيراد من قاعدة البيانات
             $lastImport = ImportLog::orderBy('last_import_time', 'desc')->first();
             $lastImportTime = $lastImport ? $lastImport->last_import_time : null;
+
+            $uids = array_column($attendances, 'uid');
+            $students = Student::whereIn('device_user_id', $uids)->get()->keyBy('device_user_id');
+            $logs = InOutLog::whereIn('student_id', $students->pluck('id'))
+                ->whereDate('in_time', now()->toDateString())
+                ->get()
+                ->keyBy('student_id');
 
             foreach ($attendances as $attendance) {
                 $attendanceTime = date('Y-m-d H:i:s', strtotime($attendance['timestamp']));
 
-                // استيراد فقط السجلات التي تمت بعد آخر وقت استيراد
                 if ($lastImportTime === null || $attendanceTime > $lastImportTime) {
-                    $student = Student::where('device_user_id', $attendance['uid'])->first();
+                    $student = $students[$attendance['uid']] ?? null;
 
                     if ($student) {
-                        $log = InOutLog::where('student_id', $student->id)
-                            ->whereDate('in_time', date('Y-m-d', strtotime($attendance['timestamp'])))
-                            ->first();
+                        $log = $logs[$student->id] ?? null;
 
                         if ($log) {
                             $log->out_time = $attendanceTime;
@@ -47,22 +54,12 @@ class AttendanceController extends Controller
 
                         $log->save();
 
-                        // إرسال إشعار للطالب عند تسجيل الدخول أو الخروج
-                        $title = 'تم تسجيل حضورك';
-                        $body = 'تم تسجيل حضورك في الوقت '.$attendanceTime;
-                        $FcmToken = DeviceToken::where('student_id', $student->id)->pluck('device_token')->toArray();
-
-                        $data = ['title' => $title, 'body' => $body];
-                        $firebaseNotification = new FirebaseService;
-                        $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
+                        $this->sendNotification($student->student_id, 'تم تسجيل حضورك', 'تم تسجيل حضورك في الوقت '.$attendanceTime);
                     }
                 }
             }
 
-            // تحديث وقت الاستيراد الأخير
             ImportLog::create(['last_import_time' => now()]);
-
-            // قطع الاتصال بجهاز البصمة
             $zk->disconnect();
 
             return response()->json(['success' => 'Attendance fetched and notifications sent successfully'], 200);
@@ -71,28 +68,49 @@ class AttendanceController extends Controller
         }
     }
 
-    public function test()
+    private function sendNotification($studentId, $title, $body)
     {
-        $student = Student::find(6); // على سبيل المثال، استخدام ID معين للطالب
+        $data = ['title' => $title, 'body' => $body];
 
-        // إذا كان الطالب موجودًا
-        if ($student) {
-            $title = 'تم تسجيل حضورك';
-            $attendanceTime = now()->format('Y-m-d H:i:s'); // يمكنك تخصيص الوقت كما تشاء
-            $body = 'تم تسجيل حضورك في الوقت '.$attendanceTime;
-            $FcmToken = DeviceToken::where('student_id', $student->id)->pluck('device_token')->toArray();
+        try {
+            $FcmToken = Http::get('https://api.dev2.gomaplus.tech/api/getFcmTokensFromServer', [
+                'student_id' => $studentId,
+            ]);
 
-            $data = ['title' => $title, 'body' => $body];
-            $firebaseNotification = new FirebaseService;
-            $firebaseNotification->BasicSendNotification($title, $body, $FcmToken, $data);
-        } else {
-            return response()->json(['error' => 'Student not found'], 404);
+            if ($FcmToken->successful()) {
+                $firebaseNotification = new FirebaseService;
+                $firebaseNotification->BasicSendNotification($title, $body, $FcmToken->json(), $data);
+            } else {
+                Log::error('Failed to retrieve FCM token for student_id: ' . $studentId);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error sending notification: ' . $e->getMessage());
+
+            Notification::create([
+                'student_id' => $studentId,
+                'title' => $title,
+                'body' => $body,
+                'data' => json_encode($data),
+            ]);
         }
     }
+
 
     public function getAttendance($studentID)
     {
         $attendance = InOutLog::where('student_id', $studentID)->get();
+
+        return AttendanceResource::collection($attendance);
+    }
+
+    /// API For Flutter To Get Attendances
+    public function getAttendances()
+    {
+        $studentID = auth::guard('api_student')->user()->id;
+
+        $attendance = InOutLog::where('student_id', $studentID)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return AttendanceResource::collection($attendance);
     }
