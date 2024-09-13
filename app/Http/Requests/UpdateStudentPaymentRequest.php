@@ -22,7 +22,6 @@ class UpdateStudentPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id' => 'integer|exists:students,id',
             'title' => 'string|max:255',
             'price' => 'numeric|min:0',
         ];

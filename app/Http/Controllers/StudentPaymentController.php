@@ -127,8 +127,8 @@ class StudentPaymentController extends Controller
 
             $studentPayment->update($request->all());
 
-            $registration = Registration::where('student_id', $request->student_id)
-                ->where('semester_id', $request->semester_id)
+            $registration = Registration::where('student_id', $studentPayment->student_id)
+                ->where('semester_id', $studentPayment->semester_id)
                 ->first();
 
             if (! $registration) {
