@@ -22,8 +22,6 @@ class UpdateExtraChargeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id' => 'integer|exists:students,id',
-            'semester_id' => 'integer|exists:semesters,id',
             'title' => 'string',
             'description' => 'string',
             'price' => 'numeric',

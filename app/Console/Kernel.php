@@ -15,9 +15,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:sync-changes-to-server')->everyMinute();
         $schedule->command('app:image-uploader')->everyMinute();
         $schedule->command('app:retry-failed-notifications')->everyMinute();
-        $schedule->call(function () {
-            app('App\Http\Controllers\AttendanceController')->fetchAttendance();
-        })->everyMinute();
+        $schedule->command('app:fetch-attendance')->everyMinute();
+        //        $schedule->call(function () {
+        //            app('App\Http\Controllers\AttendanceController')->fetchAttendance();
+        //        })->everyMinute();
     }
 
     /**

@@ -85,8 +85,8 @@ class ExtraChargeController extends Controller
 
             $extraCharge->update($request->all());
 
-            $registration = Registration::where('student_id', $request->student_id)
-                ->where('semester_id', $request->semester_id)->first();
+            $registration = Registration::where('student_id', $extraCharge->student_id)
+                ->where('semester_id', $extraCharge->semester_id)->first();
 
             if (! $registration) {
                 DB::rollback();

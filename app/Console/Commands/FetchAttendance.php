@@ -1,26 +1,49 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Console\Commands;
 
-use App\Http\Resources\AttendanceResource;
 use App\Models\ImportLog;
 use App\Models\InOutLog;
 use App\Models\Notification;
 use App\Models\Student;
 use App\Services\FirebaseService;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Jmrashed\Zkteco\Lib\ZKTeco;
 
-class AttendanceController extends Controller
+class FetchAttendance extends Command
 {
-    public function fetchAttendance()
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:fetch-attendance';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
     {
         $zk = new ZKTeco('192.168.1.201');
 
         if ($zk->connect()) {
+            $this->info('Connected to the ZKTeco device successfully.');
+
             $attendances = $zk->getAttendance();
+            if (empty($attendances)) {
+                $this->warn('No attendance records found.');
+
+                return;
+            }
 
             $lastImport = ImportLog::orderBy('last_import_time', 'desc')->first();
             $lastImportTime = $lastImport ? $lastImport->last_import_time : null;
@@ -52,16 +75,19 @@ class AttendanceController extends Controller
                         $log->save();
 
                         $this->sendNotification($student->student_id, 'تم تسجيل حضورك', 'تم تسجيل حضورك في الوقت '.$attendanceTime);
+                    } else {
+                        $this->warn("Student not found for UID: {$attendance['id']}");
                     }
                 }
             }
 
             ImportLog::create(['last_import_time' => now()]);
+
             $zk->disconnect();
 
-            return response()->json(['success' => 'Attendance fetched and notifications sent successfully'], 200);
+            $this->info('Attendance fetched and notifications sent successfully.');
         } else {
-            return response()->json(['error' => 'Failed to connect to the device'], 500);
+            $this->error('Failed to connect to the ZKTeco device.');
         }
     }
 
@@ -90,35 +116,5 @@ class AttendanceController extends Controller
                 'data' => json_encode($data),
             ]);
         }
-    }
-
-    public function get()
-    {
-        $zk = new ZKTeco('192.168.1.201');
-
-        if ($zk->connect()) {
-            $attendances = $zk->getAttendance();
-        }
-
-        return $attendances;
-    }
-
-    public function getAttendance($studentID)
-    {
-        $attendance = InOutLog::where('student_id', $studentID)->get();
-
-        return AttendanceResource::collection($attendance);
-    }
-
-    /// API For Flutter To Get Attendances
-    public function getAttendances()
-    {
-        $studentID = auth::guard('api_student')->user()->id;
-
-        $attendance = InOutLog::where('student_id', $studentID)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return AttendanceResource::collection($attendance);
     }
 }

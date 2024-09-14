@@ -137,3 +137,4 @@ Route::group(['middleware' => 'check_user:1'], function () {
     //Route::post('testImage', [SyncController::class, 'testImage']);
 
 });
+Route::get('get', [AttendanceController::class, 'get']);
