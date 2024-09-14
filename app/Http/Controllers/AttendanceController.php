@@ -28,7 +28,7 @@ class AttendanceController extends Controller
             $uids = array_column($attendances, 'id');
             $students = Student::whereIn('device_user_id', $uids)->get()->keyBy('device_user_id');
             $logs = InOutLog::whereIn('student_id', $students->pluck('id'))
-                ->whereDate('in_time', now()->toDateString())
+//                ->whereDate('in_time', now()->toDateString())
                 ->get()
                 ->keyBy('student_id');
 
@@ -41,17 +41,18 @@ class AttendanceController extends Controller
                     if ($student) {
                         $log = $logs[$student->id] ?? null;
 
-                        if ($log) {
+                        if ($log && $log->out_time === null) {
+                            // إذا كان هناك سجل موجود ولكن لم يتم تسجيل الخروج بعد، نقوم بتحديث وقت الخروج
                             $log->out_time = $attendanceTime;
+                            $log->save();
                         } else {
+                            // إذا كان لا يوجد سجل أو تم تسجيل الخروج بالفعل، نقوم بإنشاء سجل جديد للدخول
                             $log = new InOutLog;
                             $log->student_id = $student->id;
                             $log->in_time = $attendanceTime;
+                            $log->save();
                         }
 
-                        $log->save();
-
-                        $this->sendNotification($student->student_id, 'تم تسجيل حضورك', 'تم تسجيل حضورك في الوقت '.$attendanceTime);
                     }
                 }
             }
